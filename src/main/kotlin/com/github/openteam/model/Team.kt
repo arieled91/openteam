@@ -1,23 +1,21 @@
 package com.github.openteam.model
 
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "team")
 class Team (
-
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    var event: Event,
-
-//    @OneToMany(mappedBy = "team")
-//    var players: MutableList<Player>?,
-
     var name : String = "",
 
+    @OneToMany(cascade = arrayOf(CascadeType.ALL))
+    @JoinTable(name = "team_players", joinColumns = arrayOf(JoinColumn(name = "id")), inverseJoinColumns = arrayOf(JoinColumn(name = "team_id")))
+    var players: MutableList<Player> = arrayListOf(),
+
+    var creationTime : LocalDateTime = LocalDateTime.now(),
 
     @Id @GeneratedValue(strategy= GenerationType.AUTO)
-    var id : Int = 0
+    var id : Long = 0
 ){
-    constructor() : this(Event())
+    constructor() : this("")
 }

@@ -13,15 +13,8 @@ import java.time.LocalDateTime
 class DatabaseLoader : CommandLineRunner {
 
     @Autowired lateinit var eventDao: EventRepository
-    @Autowired lateinit var teamDao: TeamRepository
 
     override fun run(vararg args: String?) {
-
-
-        val event = this.eventDao.save(Event("Futbol", LocalDateTime.now()))
-
-        this.teamDao.save(Team(event, "A"))
-
-
+        this.eventDao.save(Event("Futbol", LocalDateTime.of(2017,7,7,19,0)))
     }
 }

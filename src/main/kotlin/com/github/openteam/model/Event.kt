@@ -13,8 +13,11 @@ open class Event(
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     var dateTime: LocalDateTime = LocalDateTime.MIN,
 
-    @OneToMany(mappedBy = "event")
-    var teams: MutableList<Team> = arrayListOf(),
+    @OneToMany(cascade = arrayOf(CascadeType.ALL))
+    @JoinTable(name = "event_teams", joinColumns = arrayOf(JoinColumn(name = "id")), inverseJoinColumns = arrayOf(JoinColumn(name = "event_id")))
+    var teams: MutableList<Team> =  arrayListOf(Team("default")),
+
+    var creationTime : LocalDateTime = LocalDateTime.now(),
 
     @Id @GeneratedValue(strategy= GenerationType.AUTO)
     private var id: Long = 0
