@@ -11,7 +11,7 @@ class Player (
     var creationTime : LocalDateTime = LocalDateTime.now(),
 
     @Id @GeneratedValue(strategy= GenerationType.AUTO)
-    var id : Int = 0
+    var id : Long = 0
 ){
     constructor() : this("")
 }
