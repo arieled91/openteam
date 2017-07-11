@@ -13,10 +13,8 @@ class App extends React.Component {
 	}
 
 	componentDidMount() {
-        console.log("1");
 		client({method: 'GET', path: '/api/events'}).done(response => {
-            console.log("2");
-            this.setState({events: response.entity._embedded.events});
+					this.setState({events: response.entity._embedded.events});
 		});
 	}
 
