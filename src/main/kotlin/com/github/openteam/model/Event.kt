@@ -7,7 +7,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "event")
-open class Event(
+data class Event(
     var name: String = "",
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -22,6 +22,4 @@ open class Event(
     @Id @GeneratedValue(strategy= GenerationType.AUTO)
     private var id: Long = 0
 
-){
-    constructor() : this("")
-}
+)

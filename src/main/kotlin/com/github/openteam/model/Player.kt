@@ -5,13 +5,11 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "player")
-class Player (
+data class Player (
     var name : String = "",
 
     var creationTime : LocalDateTime = LocalDateTime.now(),
 
     @Id @GeneratedValue(strategy= GenerationType.AUTO)
     var id : Long = 0
-){
-    constructor() : this("")
-}
+)

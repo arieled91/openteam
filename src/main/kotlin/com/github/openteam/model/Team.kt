@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "team")
-class Team (
+data class Team (
     var name : String = "",
 
     @OneToMany(cascade = arrayOf(CascadeType.ALL))
@@ -16,6 +16,4 @@ class Team (
 
     @Id @GeneratedValue(strategy= GenerationType.AUTO)
     var id : Long = 0
-){
-    constructor() : this("")
-}
+)
