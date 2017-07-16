@@ -15,3 +15,7 @@ a:visited {
 body {
   padding: 20px;
 }
+
+header{
+  padding: 0;
+}
