@@ -1,0 +1,17 @@
+.App {
+  text-align: center;
+}
+
+
+a {
+  text-decoration: none!important;
+  color: lightgrey;
+}
+
+a:visited {
+  color: inherit;
+}
+
+body {
+  padding: 20px;
+}
