@@ -14,7 +14,7 @@ data class Event(
     var dateTime: LocalDateTime = LocalDateTime.MIN,
 
     @OneToMany(cascade = arrayOf(CascadeType.ALL))
-    @JoinTable(name = "event_teams", joinColumns = arrayOf(JoinColumn(name = "id")), inverseJoinColumns = arrayOf(JoinColumn(name = "event_id")))
+    @JoinTable(name = "event_teams", joinColumns = arrayOf(JoinColumn(name = "key")), inverseJoinColumns = arrayOf(JoinColumn(name = "event_id")))
     var teams: MutableList<Team> =  arrayListOf(Team("default")),
 
     var creationTime : LocalDateTime = LocalDateTime.now(),

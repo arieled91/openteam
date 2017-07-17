@@ -7,7 +7,8 @@ import javax.persistence.*
 @Table(name = "player")
 data class Player (
     var name : String = "",
-
+    var email: String = "",
+    var active: Boolean = true,
     var creationTime : LocalDateTime = LocalDateTime.now(),
 
     @Id @GeneratedValue(strategy= GenerationType.AUTO)

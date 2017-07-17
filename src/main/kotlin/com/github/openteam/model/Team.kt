@@ -9,7 +9,7 @@ data class Team (
     var name : String = "",
 
     @OneToMany(cascade = arrayOf(CascadeType.ALL))
-    @JoinTable(name = "team_players", joinColumns = arrayOf(JoinColumn(name = "id")), inverseJoinColumns = arrayOf(JoinColumn(name = "team_id")))
+    @JoinTable(name = "team_players", joinColumns = arrayOf(JoinColumn(name = "key")), inverseJoinColumns = arrayOf(JoinColumn(name = "team_id")))
     var players: MutableList<Player> = arrayListOf(),
 
     var creationTime : LocalDateTime = LocalDateTime.now(),
