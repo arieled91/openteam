@@ -46,21 +46,21 @@ dependencies {
     compile("com.h2database:h2")
     compile ('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.9')
     compile ('net.sourceforge.nekohtml:nekohtml:1.9.21')
-	compile project(':webapp')
+//	compile project(':webapp')
 }
 
 
-task copyTemplate(type: Copy) {
-	from childProjects.get('webapp').files('public')
-	into file('src/main/resources/templates')
-	exclude "built/"
-}
-
-task copyJs(type: Copy) {
-	from childProjects.get('webapp').files('public/built')
-	into file('src/main/resources/static/built')
-	include "*.js"
-}
-
-jar.dependsOn copyTemplate
-jar.dependsOn copyJs
+//task copyTemplate(type: Copy) {
+//	from childProjects.get('webapp').files('public')
+//	into file('src/main/resources/templates')
+//	exclude "built/"
+//}
+//
+//task copyJs(type: Copy) {
+//	from childProjects.get('webapp').files('public/built')
+//	into file('src/main/resources/static/built')
+//	include "*.js"
+//}
+//
+//jar.dependsOn copyTemplate
+//jar.dependsOn copyJs

@@ -9,10 +9,9 @@ import {
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {FieldGroup} from "./common/FieldGroup";
 import {checkboxFormatter} from "./common/TableCheckbox";
+import {client} from "./common/Api";
 
 const uuidv4 = require('uuid/v4');
-
-const api = "http://localhost:8888/api";
 
 export default class Player extends Component {
 
@@ -32,14 +31,20 @@ export default class Player extends Component {
     // client({method: 'GET', path: '/api/players'}).done(response => {
     //   this.setState({players: response.entity._embedded.players});
     // });
-    fetch(api+'/players')
-      .then((response)=>{
-        return response.json()
-      })
-      .then((entity) => {
-        entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
-        this.setState({ players: entity._embedded.players})
-      })
+
+    // fetch(api+'/players')
+    //   .then((response)=>{
+    //     return response.json()
+    //   })
+    //   .then((entity) => {
+    //     entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
+    //     this.setState({ players: entity._embedded.players})
+    //   })
+
+    client("/players").then((entity) => {
+            entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
+            this.setState({ players: entity._embedded.players})
+    })
   }
 
   onSubmit(e){
