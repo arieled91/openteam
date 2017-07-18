@@ -7,9 +7,9 @@ import {
 
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {FieldGroup} from "./common/FieldGroup";
-import {checkboxFormatter} from "./common/TableCheckbox";
 import {client} from "./common/Api";
 import {Message} from "./common/Message";
+import CheckboxFormatter from "./common/CheckboxFormatter";
 
 const uuidv4 = require('uuid/v4');
 
@@ -19,12 +19,17 @@ export default class Player extends Component {
     super(props);
     this.state = {
       players : [],
-      errorMessage : String
+      playersTable : [],
+      errorMessage : String,
+      currentRow : {}
     };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteRow = this.onDeleteRow.bind(this);
+    this.onRowMouseOver = this.onRowMouseOver.bind(this);
     this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
+    this.afterSearch = this.afterSearch.bind(this);
+    // this.populateTable = this.populateTable.bind(this);
   }
 
   componentDidMount() {
@@ -43,7 +48,10 @@ export default class Player extends Component {
 
     client("/players").then((entity) => {
       entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
-      this.setState({ players: entity._embedded.players})
+      this.setState({
+          players: entity._embedded.players,
+          playersTable: entity._embedded.players
+      })
     }).catch((e)=>{
       this.setState({errorMessage: "Back-end server not found"})
     })
@@ -53,6 +61,28 @@ export default class Player extends Component {
   onDismissErrorMessage(){
     this.setState({errorMessage : ""})
   }
+
+  onRowMouseOver(row){
+    this.setState({currentRow: row})
+  };
+
+  afterSearch(text){
+    if(text.length>2){
+      const players = this.state.players;
+      console.log(text);
+      this.setState({playersTable: players.filter(player =>{
+        return player.name.toUpperCase().includes(text.toUpperCase()) || player.email.toUpperCase().includes(text.toUpperCase());
+      })});
+      console.log(this.state.playersTable)
+    }else{
+      this.setState({playersTable: this.state.players});
+    }
+
+  }
+
+  // populateTable(){
+  //     this.setState({playersTable: this.state.players});
+  // }
 
 
   onSubmit(e){
@@ -69,23 +99,44 @@ export default class Player extends Component {
     e.target.playerTeamMember.checked=false;
 
     this.setState({
-      players: newPlayers
+      players: newPlayers,
+      playersTable: newPlayers
     });
 
     e.preventDefault();
   }
 
 
-  onDeleteRow(row) {
-
+  onDeleteRow() {
+    const row = this.state.currentRow;
 
     let filtered = this.state.players.filter(player => {
-      return player.uuid !== row[0];
+      return player.uuid !== row.uuid;
     });
 
     this.setState({
-      players: filtered
+      players: filtered,
+      playersTable: filtered
     });
+  }
+
+
+  deleteButtonFormatter=(onClick)=>{
+      return (<a onClick={onClick}><Glyphicon glyph="trash"/></a>);
+  };
+
+  editButtonFormatter=(onClick)=>{
+      return (<a onClick={onClick}><Glyphicon glyph="edit"/></a>);
+  };
+
+  checkboxFormatter(cell, row) {
+      return (<CheckboxFormatter active={ cell } />);
+  }
+
+  filterType(cell, row) {
+        // just return type for filtering or searching.
+      console.log(cell);
+        return cell.type;
   }
 
   selectRowProp = {
@@ -107,11 +158,11 @@ export default class Player extends Component {
                     type="text"
                     label="Name"
                     placeholder="Enter Name"
-                    colxs="7"
-                    colmd="4"
+                    colxs={7}
+                    colmd={4}
                     required
                 />
-                <Col xs="5" md="2">
+                <Col xs={5} md={2}>
                   <Checkbox id="playerTeamMember" style={{marginTop:"30px"}}>Team Member</Checkbox>
                 </Col>
                 <FieldGroup
@@ -119,10 +170,10 @@ export default class Player extends Component {
                     type="email"
                     label="Email address"
                     placeholder="Enter email"
-                    colxs="7"
-                    colmd="4"
+                    colxs={7}
+                    colmd={4}
                 />
-                <Col xs="5" md="2">
+                <Col xs={5} md={2}>
                   <FormGroup>
                     <Button type="submit" className="btn btn-primary" style={{marginTop:"24px"}}>
                       <Glyphicon glyph="plus" style={{marginRight:'5px'}}/>
@@ -134,21 +185,23 @@ export default class Player extends Component {
             </form>
 
             <BootstrapTable
-                data={this.state.players}
+                data={this.state.playersTable}
                 striped
+                pagination
                 remote={ true }
-                deleteRow={true}
                 selectRow={this.selectRowProp}
-                options={ { onDeleteRow: this.onDeleteRow } }
+                options={{onRowMouseOver: this.onRowMouseOver, afterSearch: this.afterSearch }}
+                search={true}
                 hover>
               <TableHeaderColumn isKey dataField='uuid' hidden={true}/>
-              <TableHeaderColumn dataField='name'>Player Name</TableHeaderColumn>
-              <TableHeaderColumn dataField='email'>Email</TableHeaderColumn>
-              <TableHeaderColumn dataField='teamMember' dataFormat={ checkboxFormatter }>Team Member</TableHeaderColumn>
+              <TableHeaderColumn dataField='name' filterValue={this.filterType} l>Player Name</TableHeaderColumn>
+              <TableHeaderColumn dataField='email' filterValue={this.filterType}>Email</TableHeaderColumn>
+              <TableHeaderColumn dataField='teamMember' dataFormat={this.checkboxFormatter }  width={"20%"} dataAlign={'center'}>Team Member</TableHeaderColumn>
+              <TableHeaderColumn dataFormat={() => this.deleteButtonFormatter(this.onDeleteRow)} width={"60px"} />
+              <TableHeaderColumn dataFormat={() => this.editButtonFormatter(this.onDeleteRow)} width={"60px"} /> //todo edit action
             </BootstrapTable>
           </Grid>
         </div>
-
     )
   }
 }
