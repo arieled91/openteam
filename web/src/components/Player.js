@@ -144,7 +144,8 @@ export default class Player extends Component {
       uuid : this.state.currentRow.uuid,
       playerTeamMember : this.state.currentRow.teamTember,
       editMode: true
-    })
+    });
+    this.playerName.focus();
   }
 
 
@@ -207,6 +208,7 @@ export default class Player extends Component {
                     placeholder="Enter Name"
                     value={this.state.playerName}
                     onChange={this.playerNameChanged}
+                    inputRef={input => this.playerName = input}
                     colxs={7}
                     colmd={4}
                     required
