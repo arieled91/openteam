@@ -21,7 +21,9 @@ export default class Player extends Component {
       players : [],
       playersTable : [],
       errorMessage : String,
-      currentRow : {}
+      currentRow : {},
+      editPlayer : {},
+      editMode : false
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -29,23 +31,10 @@ export default class Player extends Component {
     this.onRowMouseOver = this.onRowMouseOver.bind(this);
     this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
     this.afterSearch = this.afterSearch.bind(this);
-    // this.populateTable = this.populateTable.bind(this);
+    this.onEditRow = this.onEditRow.bind(this);
   }
 
   componentDidMount() {
-    // client({method: 'GET', path: '/api/players'}).done(response => {
-    //   this.setState({players: response.entity._embedded.players});
-    // });
-
-    // fetch(api+'/players')
-    //   .then((response)=>{
-    //     return response.json()
-    //   })
-    //   .then((entity) => {
-    //     entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
-    //     this.setState({ players: entity._embedded.players})
-    //   })
-
     client("/players").then((entity) => {
       entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
       this.setState({
@@ -80,63 +69,93 @@ export default class Player extends Component {
 
   }
 
-  // populateTable(){
-  //     this.setState({playersTable: this.state.players});
-  // }
-
-
   onSubmit(e){
-    const newPlayers = this.state.players.concat({
-      uuid : uuidv4(),
-      name : e.target.playerName.value,
-      email : e.target.playerEmail.value,
-      teamMember : e.target.playerTeamMember.checked,
-      active : true
-    });
+    const players = this.state.editMode ? this.update(e) : this.create(e);
 
     e.target.playerName.value="";
     e.target.playerEmail.value="";
     e.target.playerTeamMember.checked=false;
 
     this.setState({
-      players: newPlayers,
-      playersTable: newPlayers
+      players: players,
+      playersTable: players,
+      editMode: false,
+      editPlayer: {}
     });
 
     e.preventDefault();
   }
 
-
-  onDeleteRow() {
-    const row = this.state.currentRow;
-
-    let filtered = this.state.players.filter(player => {
-      return player.uuid !== row.uuid;
-    });
-
-    this.setState({
-      players: filtered,
-      playersTable: filtered
+  create(e){
+    return this.state.players.concat({
+      uuid: uuidv4(),
+      name: e.target.playerName.value,
+      email: e.target.playerEmail.value,
+      teamMember: e.target.playerTeamMember.checked,
+      active: true
     });
   }
 
+  update(e){
+    const player = this.state.players.find(
+        player => player.uuid===this.state.editPlayer.uuid
+    );
 
-  deleteButtonFormatter=(onClick)=>{
-      return (<a onClick={onClick}><Glyphicon glyph="trash"/></a>);
+    player.name = e.target.playerName.value;
+    player.email = e.target.playerEmail.value;
+    player.teamMember = e.target.playerTeamMember.checked;
+
+    return this.state.players.filter(
+        player => player.uuid===this.state.editPlayer.uuid
+    ).concat(player);
+  }
+
+
+
+  onDeleteRow() {
+    if (window.confirm("Are you sure you want to remove the player?")) {
+      const row = this.state.currentRow;
+
+      let filtered = this.state.players.filter(player => {
+        return player.uuid !== row.uuid;
+      });
+
+      this.setState({
+        players: filtered,
+        playersTable: filtered
+      });
+    }
+  }
+
+  onEditRow(){
+    this.setState({
+      editPlayer: this.state.currentRow,
+      editMode: true
+    })
+  }
+
+
+  deleteButtonFormatter=(onDelete, onEdit)=>{
+
+    const style={
+      marginRight:'10px',
+      marginLeft:'10px'
+    };
+
+    return (
+        <div>
+          <a onClick={onDelete} style={style}><Glyphicon glyph="trash"/></a>
+          <a onClick={onEdit} style={style}><Glyphicon glyph="edit"/></a>
+        </div>
+    );
   };
 
   editButtonFormatter=(onClick)=>{
       return (<a onClick={onClick}><Glyphicon glyph="edit"/></a>);
   };
 
-  checkboxFormatter(cell, row) {
+  static checkboxFormatter(cell, row) {
       return (<CheckboxFormatter active={ cell } />);
-  }
-
-  filterType(cell, row) {
-        // just return type for filtering or searching.
-      console.log(cell);
-        return cell.type;
   }
 
   selectRowProp = {
@@ -158,26 +177,37 @@ export default class Player extends Component {
                     type="text"
                     label="Name"
                     placeholder="Enter Name"
+                    defaultValue={this.state.editPlayer.name}
                     colxs={7}
                     colmd={4}
                     required
                 />
                 <Col xs={5} md={2}>
-                  <Checkbox id="playerTeamMember" style={{marginTop:"30px"}}>Team Member</Checkbox>
+                  <Checkbox
+                      id="playerTeamMember"
+                      defaultValue={this.state.editPlayer.teamMember}
+                      style={{marginTop:"30px"}}>
+                    Team Member
+                  </Checkbox>
                 </Col>
                 <FieldGroup
                     id="playerEmail"
                     type="email"
                     label="Email address"
                     placeholder="Enter email"
+                    defaultValue={this.state.editPlayer.email}
                     colxs={7}
                     colmd={4}
                 />
                 <Col xs={5} md={2}>
                   <FormGroup>
-                    <Button type="submit" className="btn btn-primary" style={{marginTop:"24px"}}>
+                    <Button type="submit" className={"btn btn-primary "+(this.state.editMode ? "hide":"")} style={{marginTop:"24px"}}>
                       <Glyphicon glyph="plus" style={{marginRight:'5px'}}/>
                         Add
+                    </Button>
+                    <Button type="submit" className={"btn btn-success "+(this.state.editMode ? "":"hide")} style={{marginTop:"24px"}}>
+                      <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
+                      Save
                     </Button>
                   </FormGroup>
                 </Col>
@@ -194,11 +224,10 @@ export default class Player extends Component {
                 search={true}
                 hover>
               <TableHeaderColumn isKey dataField='uuid' hidden={true}/>
-              <TableHeaderColumn dataField='name' filterValue={this.filterType} l>Player Name</TableHeaderColumn>
-              <TableHeaderColumn dataField='email' filterValue={this.filterType}>Email</TableHeaderColumn>
-              <TableHeaderColumn dataField='teamMember' dataFormat={this.checkboxFormatter }  width={"20%"} dataAlign={'center'}>Team Member</TableHeaderColumn>
-              <TableHeaderColumn dataFormat={() => this.deleteButtonFormatter(this.onDeleteRow)} width={"60px"} />
-              <TableHeaderColumn dataFormat={() => this.editButtonFormatter(this.onDeleteRow)} width={"60px"} /> //todo edit action
+              <TableHeaderColumn dataField='name' >Player Name</TableHeaderColumn>
+              <TableHeaderColumn dataField='email' >Email</TableHeaderColumn>
+              <TableHeaderColumn dataField='teamMember' dataFormat={Player.checkboxFormatter } width={"20%"} dataAlign={'center'}>Team Member</TableHeaderColumn>
+              <TableHeaderColumn dataFormat={() => this.deleteButtonFormatter(this.onDeleteRow, this.onEditRow)} width={"80px"} />
             </BootstrapTable>
           </Grid>
         </div>
