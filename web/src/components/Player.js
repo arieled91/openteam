@@ -22,8 +22,13 @@ export default class Player extends Component {
       playersTable : [],
       errorMessage : String,
       currentRow : {},
-      editPlayer : {},
-      editMode : false
+      editMode : false,
+
+      //player form
+      uuid : uuidv4(),
+      playerName : "",
+      playerEmail : "",
+      playerTeamMember : false
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -32,6 +37,9 @@ export default class Player extends Component {
     this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
     this.afterSearch = this.afterSearch.bind(this);
     this.onEditRow = this.onEditRow.bind(this);
+    this.playerNameChanged = this.playerNameChanged.bind(this);
+    this.playerEmailChanged = this.playerEmailChanged.bind(this);
+    this.playerTeamMemberChanged = this.playerTeamMemberChanged.bind(this);
   }
 
   componentDidMount() {
@@ -72,15 +80,15 @@ export default class Player extends Component {
   onSubmit(e){
     const players = this.state.editMode ? this.update(e) : this.create(e);
 
-    e.target.playerName.value="";
-    e.target.playerEmail.value="";
-    e.target.playerTeamMember.checked=false;
-
     this.setState({
       players: players,
       playersTable: players,
       editMode: false,
-      editPlayer: {}
+
+      uuid: uuidv4(),
+      playerName: "",
+      playerEmail: "",
+      playerTeamMember:false
     });
 
     e.preventDefault();
@@ -97,17 +105,19 @@ export default class Player extends Component {
   }
 
   update(e){
-    const player = this.state.players.find(
-        player => player.uuid===this.state.editPlayer.uuid
+    let players =  this.state.players;
+    const player = players.find(
+        player => player.uuid===this.state.uuid
     );
 
-    player.name = e.target.playerName.value;
-    player.email = e.target.playerEmail.value;
-    player.teamMember = e.target.playerTeamMember.checked;
+    player.name = this.state.playerName;
+    player.email = this.state.playerEmail;
+    player.teamMember = this.state.playerTeamMember;
 
-    return this.state.players.filter(
-        player => player.uuid===this.state.editPlayer.uuid
-    ).concat(player);
+    // return this.state.players.filter(
+    //     player => player.uuid===this.state.editPlayer.uuid
+    // ).concat(player);
+    return players;
   }
 
 
@@ -129,7 +139,10 @@ export default class Player extends Component {
 
   onEditRow(){
     this.setState({
-      editPlayer: this.state.currentRow,
+      playerName: this.state.currentRow.name,
+      playerEmail: this.state.currentRow.email,
+      uuid : this.state.currentRow.uuid,
+      playerTeamMember : this.state.currentRow.teamTember,
       editMode: true
     })
   }
@@ -148,6 +161,20 @@ export default class Player extends Component {
           <a onClick={onEdit} style={style}><Glyphicon glyph="edit"/></a>
         </div>
     );
+  };
+
+
+
+  playerNameChanged = (event) => {
+      this.setState({ playerName: event.target.value });
+  };
+
+  playerEmailChanged = (event) => {
+      this.setState({ playerEmail: event.target.value });
+  };
+
+  playerTeamMemberChanged = (event) => {
+      this.setState({ playerTeamMember: event.target.value });
   };
 
   editButtonFormatter=(onClick)=>{
@@ -176,8 +203,10 @@ export default class Player extends Component {
                     id="playerName"
                     type="text"
                     label="Name"
+                    autoFocus
                     placeholder="Enter Name"
-                    defaultValue={this.state.editPlayer.name}
+                    value={this.state.playerName}
+                    onChange={this.playerNameChanged}
                     colxs={7}
                     colmd={4}
                     required
@@ -185,7 +214,8 @@ export default class Player extends Component {
                 <Col xs={5} md={2}>
                   <Checkbox
                       id="playerTeamMember"
-                      defaultValue={this.state.editPlayer.teamMember}
+                      value={this.state.playerTeamMember}
+                      onChange={this.playerTeamMemberChanged}
                       style={{marginTop:"30px"}}>
                     Team Member
                   </Checkbox>
@@ -194,8 +224,9 @@ export default class Player extends Component {
                     id="playerEmail"
                     type="email"
                     label="Email address"
+                    value={this.state.playerEmail}
+                    onChange={this.playerEmailChanged}
                     placeholder="Enter email"
-                    defaultValue={this.state.editPlayer.email}
                     colxs={7}
                     colmd={4}
                 />
