@@ -188,9 +188,9 @@ export default class Player extends Component {
 
   selectRowProp = {
     mode: 'radio',
-    bgColor: '#EAEAEA', // you should give a bgcolor, otherwise, you can't regonize which row has been selected
-    hideSelectColumn: true,  // enable hide selection column.
-    clickToSelect: true,  // you should enable clickToSelect, otherwise, you can't select column.
+    bgColor: '#EAEAEA',
+    hideSelectColumn: true,
+    clickToSelect: true,
   };
 
   render() {
