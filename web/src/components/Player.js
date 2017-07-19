@@ -40,6 +40,7 @@ export default class Player extends Component {
     this.playerNameChanged = this.playerNameChanged.bind(this);
     this.playerEmailChanged = this.playerEmailChanged.bind(this);
     this.playerTeamMemberChanged = this.playerTeamMemberChanged.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   componentDidMount() {
@@ -79,19 +80,24 @@ export default class Player extends Component {
 
   onSubmit(e){
     const players = this.state.editMode ? this.update(e) : this.create(e);
+      this.setState({
+          players: players,
+          playersTable: players
+      });
 
-    this.setState({
-      players: players,
-      playersTable: players,
-      editMode: false,
-
-      uuid: uuidv4(),
-      playerName: "",
-      playerEmail: "",
-      playerTeamMember:false
-    });
+    this.reset();
 
     e.preventDefault();
+  }
+
+  reset(){
+      this.setState({
+          editMode: false,
+          uuid: uuidv4(),
+          playerName: "",
+          playerEmail: "",
+          playerTeamMember:false
+      });
   }
 
   create(e){
@@ -131,9 +137,11 @@ export default class Player extends Component {
       });
 
       this.setState({
-        players: filtered,
-        playersTable: filtered
+          players: filtered,
+          playersTable: filtered
       });
+
+      this.reset();
     }
   }
 
@@ -241,6 +249,9 @@ export default class Player extends Component {
                     <Button type="submit" className={"btn btn-success "+(this.state.editMode ? "":"hide")} style={{marginTop:"24px"}}>
                       <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
                       Save
+                    </Button>
+                    <Button className={"btn btn-default "+(this.state.playerName!=="" ? "":"hide")} style={{marginTop:"24px", marginLeft:'20px'}} onClick={this.reset}>
+                      <Glyphicon glyph="remove" style={{marginRight:'5px'}}/>
                     </Button>
                   </FormGroup>
                 </Col>
