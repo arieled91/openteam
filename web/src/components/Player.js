@@ -7,7 +7,7 @@ import {
 
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {FieldGroup} from "./common/FieldGroup";
-import {client} from "./common/Api";
+import {clientGet, clientPatch, clientPost} from "./common/Api";
 import {Message} from "./common/Message";
 import CheckboxFormatter from "./common/CheckboxFormatter";
 
@@ -28,7 +28,7 @@ export default class Player extends Component {
       uuid : uuidv4(),
       playerName : "",
       playerEmail : "",
-      playerTeamMember : false
+      playerGuest : false
     };
 
     this.onSubmit = this.onSubmit.bind(this);
@@ -37,14 +37,14 @@ export default class Player extends Component {
     this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
     this.afterSearch = this.afterSearch.bind(this);
     this.onEditRow = this.onEditRow.bind(this);
-    this.playerNameChanged = this.playerNameChanged.bind(this);
-    this.playerEmailChanged = this.playerEmailChanged.bind(this);
-    this.playerTeamMemberChanged = this.playerTeamMemberChanged.bind(this);
+    // this.playerNameChanged = this.playerNameChanged.bind(this);
+    // this.playerEmailChanged = this.playerEmailChanged.bind(this);
+    // this.playerGuestChanged = this.playerGuestChanged.bind(this);
     this.reset = this.reset.bind(this);
   }
 
   componentDidMount() {
-    client("/players").then((entity) => {
+    clientGet("players?sort=name,asc").then((entity) => {
       entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
       this.setState({
           players: entity._embedded.players,
@@ -54,6 +54,32 @@ export default class Player extends Component {
       this.setState({errorMessage: "Back-end server not found"})
     })
 
+  }
+
+  post(newPlayer){
+    clientPost("players", newPlayer).then((player) => {
+      player.uuid = uuidv4();
+      let players = this.state.players.concat(player);
+      this.setState({
+        players: players,
+        playersTable: players
+      })
+    }).catch((e)=>{
+      this.setState({errorMessage: "Back-end server not found"})
+    })
+  }
+
+  patch(updatePlayer, path){
+    clientPatch(path, updatePlayer).then((player) => {
+      player.uuid = uuidv4();
+      let players = this.state.players.filter(p => p.uuid!==updatePlayer.uuid).concat(player);
+      this.setState({
+        players: players,
+        playersTable: players
+      })
+    }).catch((e)=>{
+      this.setState({errorMessage: "Back-end server not found"})
+    })
   }
 
   onDismissErrorMessage(){
@@ -79,11 +105,11 @@ export default class Player extends Component {
   }
 
   onSubmit(e){
-    const players = this.state.editMode ? this.update(e) : this.create(e);
-      this.setState({
-          players: players,
-          playersTable: players
-      });
+    this.state.editMode ? this.update(e) : this.create(e);
+      // this.setState({
+      //     players: players,
+      //     playersTable: players
+      // });
 
     this.reset();
 
@@ -96,18 +122,19 @@ export default class Player extends Component {
           uuid: uuidv4(),
           playerName: "",
           playerEmail: "",
-          playerTeamMember:false
+          playerGuest:false
       });
   }
 
   create(e){
-    return this.state.players.concat({
-      uuid: uuidv4(),
-      name: e.target.playerName.value,
-      email: e.target.playerEmail.value,
-      teamMember: e.target.playerTeamMember.checked,
-      active: true
-    });
+    this.post(this.copyTo({}));
+  }
+
+  copyTo(player){
+    player.name = this.state.playerName;
+    player.email = this.state.playerEmail;
+    player.guest = this.state.playerGuest;
+    return player;
   }
 
   update(e){
@@ -116,14 +143,7 @@ export default class Player extends Component {
         player => player.uuid===this.state.uuid
     );
 
-    player.name = this.state.playerName;
-    player.email = this.state.playerEmail;
-    player.teamMember = this.state.playerTeamMember;
-
-    // return this.state.players.filter(
-    //     player => player.uuid===this.state.editPlayer.uuid
-    // ).concat(player);
-    return players;
+    this.patch(this.copyTo({uuid : player.uuid}), player._links.self.href);
   }
 
 
@@ -150,14 +170,14 @@ export default class Player extends Component {
       playerName: this.state.currentRow.name,
       playerEmail: this.state.currentRow.email,
       uuid : this.state.currentRow.uuid,
-      playerTeamMember : this.state.currentRow.teamTember,
+      playerGuest : this.state.currentRow.guest,
       editMode: true
     });
     this.playerName.focus();
   }
 
 
-  deleteButtonFormatter=(onDelete, onEdit)=>{
+  buttonsFormatter=(onDelete, onEdit)=>{
 
     const style={
       marginRight:'10px',
@@ -172,7 +192,9 @@ export default class Player extends Component {
     );
   };
 
-
+  static checkboxFormatter(cell, row) {
+    return (<CheckboxFormatter active={ cell } />);
+  }
 
   playerNameChanged = (event) => {
       this.setState({ playerName: event.target.value });
@@ -182,17 +204,9 @@ export default class Player extends Component {
       this.setState({ playerEmail: event.target.value });
   };
 
-  playerTeamMemberChanged = (event) => {
-      this.setState({ playerTeamMember: event.target.value });
+  playerGuestChanged = (event) => {
+      this.setState({ playerGuest: event.target.value });
   };
-
-  editButtonFormatter=(onClick)=>{
-      return (<a onClick={onClick}><Glyphicon glyph="edit"/></a>);
-  };
-
-  static checkboxFormatter(cell, row) {
-      return (<CheckboxFormatter active={ cell } />);
-  }
 
   selectRowProp = {
     mode: 'radio',
@@ -223,11 +237,11 @@ export default class Player extends Component {
                 />
                 <Col xs={5} md={2}>
                   <Checkbox
-                      id="playerTeamMember"
-                      value={this.state.playerTeamMember}
-                      onChange={this.playerTeamMemberChanged}
+                      id="playerGuest"
+                      value={this.state.playerGuest}
+                      onChange={this.playerGuestChanged}
                       style={{marginTop:"30px"}}>
-                    Team Member
+                    Guest
                   </Checkbox>
                 </Col>
                 <FieldGroup
@@ -270,8 +284,8 @@ export default class Player extends Component {
               <TableHeaderColumn isKey dataField='uuid' hidden={true}/>
               <TableHeaderColumn dataField='name' >Player Name</TableHeaderColumn>
               <TableHeaderColumn dataField='email' >Email</TableHeaderColumn>
-              <TableHeaderColumn dataField='teamMember' dataFormat={Player.checkboxFormatter } width={"20%"} dataAlign={'center'}>Team Member</TableHeaderColumn>
-              <TableHeaderColumn dataFormat={() => this.deleteButtonFormatter(this.onDeleteRow, this.onEditRow)} width={"80px"} />
+              <TableHeaderColumn dataField='guest' dataFormat={Player.checkboxFormatter } width={"20%"} dataAlign={'center'}>Guest</TableHeaderColumn>
+              <TableHeaderColumn dataFormat={() => this.buttonsFormatter(this.onDeleteRow, this.onEditRow)} width={"80px"} />
             </BootstrapTable>
           </Grid>
         </div>

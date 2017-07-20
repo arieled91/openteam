@@ -8,6 +8,7 @@ import javax.persistence.*
 data class Player (
     var name : String = "",
     var email: String = "",
+    var guest: Boolean = false,
     var active: Boolean = true,
     var creationTime : LocalDateTime = LocalDateTime.now(),
 
