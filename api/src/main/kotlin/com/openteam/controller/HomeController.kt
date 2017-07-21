@@ -1,4 +1,4 @@
-package com.github.openteam.controller
+package com.openteam.controller
 
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping

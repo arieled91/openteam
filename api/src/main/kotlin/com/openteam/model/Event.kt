@@ -1,4 +1,4 @@
-package com.github.openteam.model
+package com.openteam.model
 
 
 import org.springframework.format.annotation.DateTimeFormat

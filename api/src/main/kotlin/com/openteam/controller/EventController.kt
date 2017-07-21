@@ -1,4 +1,4 @@
-package com.github.openteam.controller
+package com.openteam.controller
 
 //@RestController
 open class EventController {

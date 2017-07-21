@@ -19,7 +19,6 @@ export default class Player extends Component {
     super(props);
     this.state = {
       players : [],
-      playersTable : [],
       errorMessage : String,
       currentRow : {},
       editMode : false,
@@ -44,26 +43,23 @@ export default class Player extends Component {
   }
 
   componentDidMount() {
-    clientGet("players?sort=name,asc").then((entity) => {
-      entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
-      this.setState({
-          players: entity._embedded.players,
-          playersTable: entity._embedded.players
-      })
-    }).catch((e)=>{
-      this.setState({errorMessage: "Back-end server not found"})
-    })
+    this.populate();
+  }
 
+  populate(){
+      clientGet("players?sort=name,asc").then((entity) => {
+          entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
+          this.setState({
+              players: entity._embedded.players
+          })
+      }).catch((e)=>{
+          this.setState({errorMessage: "Back-end server not found"})
+      })
   }
 
   post(newPlayer){
     clientPost("players", newPlayer).then((player) => {
-      player.uuid = uuidv4();
-      let players = this.state.players.concat(player);
-      this.setState({
-        players: players,
-        playersTable: players
-      })
+      this.populate();
     }).catch((e)=>{
       this.setState({errorMessage: "Back-end server not found"})
     })
@@ -71,12 +67,7 @@ export default class Player extends Component {
 
   patch(updatePlayer, path){
     clientPatch(path, updatePlayer).then((player) => {
-      player.uuid = uuidv4();
-      let players = this.state.players.filter(p => p.uuid!==updatePlayer.uuid).concat(player);
-      this.setState({
-        players: players,
-        playersTable: players
-      })
+      this.populate();
     }).catch((e)=>{
       this.setState({errorMessage: "Back-end server not found"})
     })
@@ -157,8 +148,7 @@ export default class Player extends Component {
       });
 
       this.setState({
-          players: filtered,
-          playersTable: filtered
+          players: filtered
       });
 
       this.reset();
@@ -273,7 +263,7 @@ export default class Player extends Component {
             </form>
 
             <BootstrapTable
-                data={this.state.playersTable}
+                data={this.state.players}
                 striped
                 pagination
                 remote={ true }

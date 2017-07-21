@@ -1,8 +1,8 @@
-package com.github.openteam.persistance
+package com.openteam.persistance
 
-import com.github.openteam.model.Event
-import com.github.openteam.model.Player
-import com.github.openteam.repository.EventRepository
+import com.openteam.model.Event
+import com.openteam.model.Player
+import com.openteam.repository.EventRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
