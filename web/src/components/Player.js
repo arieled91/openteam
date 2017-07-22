@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 import {
-  Button,
-  Checkbox, Col, FormGroup, Glyphicon, Grid, Row
+    Button,
+    Checkbox, Col, FormGroup, Glyphicon, Grid, Pagination, Row
 } from "react-bootstrap";
 
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
@@ -15,6 +15,9 @@ const uuidv4 = require('uuid/v4');
 
 export default class Player extends Component {
 
+  static PAGE_SIZE = 5;
+  static MAX_ROW_SIZE = 100;
+
   constructor(props){
     super(props);
     this.state = {
@@ -22,6 +25,14 @@ export default class Player extends Component {
       errorMessage : String,
       currentRow : {},
       editMode : false,
+      searchText : "",
+      activePage : 1,
+      page: {
+        size: Number,
+        totalElements: Number,
+        totalPages: Number,
+        number: Number
+      },
 
       //player form
       uuid : uuidv4(),
@@ -36,9 +47,7 @@ export default class Player extends Component {
     this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
     this.afterSearch = this.afterSearch.bind(this);
     this.onEditRow = this.onEditRow.bind(this);
-    // this.playerNameChanged = this.playerNameChanged.bind(this);
-    // this.playerEmailChanged = this.playerEmailChanged.bind(this);
-    // this.playerGuestChanged = this.playerGuestChanged.bind(this);
+    this.onPageSelect = this.onPageSelect.bind(this);
     this.reset = this.reset.bind(this);
   }
 
@@ -47,13 +56,20 @@ export default class Player extends Component {
   }
 
   populate(){
-      clientGet("players?sort=name,asc").then((entity) => {
-          entity._embedded.players.forEach((player)=>{player.uuid = uuidv4()});
+      let searchText = this.state.searchText;
+      clientGet(
+          "players/search/findByNameIgnoreCaseContainingOrderByName?name="+searchText+
+          "&size="+Player.PAGE_SIZE+
+          "&page="+(this.state.activePage))
+        .then((entity) => {
+          const players = entity._embedded.players;
+          players.forEach((player)=>{player.uuid = uuidv4()});
           this.setState({
-              players: entity._embedded.players
+              players: players,
+              page : entity.page
           })
       }).catch((e)=>{
-          this.setState({errorMessage: "Back-end server not found"})
+          this.setState({errorMessage: "Back-end server error"})
       })
   }
 
@@ -61,7 +77,7 @@ export default class Player extends Component {
     clientPost("players", newPlayer).then((player) => {
       this.populate();
     }).catch((e)=>{
-      this.setState({errorMessage: "Back-end server not found"})
+      this.setState({errorMessage: "Back-end server error"})
     })
   }
 
@@ -69,7 +85,7 @@ export default class Player extends Component {
     clientPatch(path, updatePlayer).then((player) => {
       this.populate();
     }).catch((e)=>{
-      this.setState({errorMessage: "Back-end server not found"})
+      this.setState({errorMessage: "Back-end server error"})
     })
   }
 
@@ -82,28 +98,17 @@ export default class Player extends Component {
   };
 
   afterSearch(text){
-    if(text.length>2){
-      const players = this.state.players;
-      console.log(text);
-      this.setState({playersTable: players.filter(player =>{
-        return player.name.toUpperCase().includes(text.toUpperCase()) || player.email.toUpperCase().includes(text.toUpperCase());
-      })});
-      console.log(this.state.playersTable)
-    }else{
-      this.setState({playersTable: this.state.players});
-    }
+    if(text.length>2)
+      this.setState({searchText: text});
+    else
+      this.setState({searchText: ""});
 
+    this.populate()
   }
 
   onSubmit(e){
     this.state.editMode ? this.update(e) : this.create(e);
-      // this.setState({
-      //     players: players,
-      //     playersTable: players
-      // });
-
     this.reset();
-
     e.preventDefault();
   }
 
@@ -166,6 +171,15 @@ export default class Player extends Component {
     this.playerName.focus();
   }
 
+  onPageSelect(page) {
+    console.log(page);
+      this.setState({
+          activePage: page
+      });
+
+      this.populate();
+  }
+
 
   buttonsFormatter=(onDelete, onEdit)=>{
 
@@ -206,6 +220,12 @@ export default class Player extends Component {
   };
 
   render() {
+
+    const options = {
+      onRowMouseOver: this.onRowMouseOver,
+      afterSearch: this.afterSearch
+    };
+
     return (
         <div>
           <Message type="danger" message={this.state.errorMessage} onDismiss={this.onDismissErrorMessage}/>
@@ -265,10 +285,9 @@ export default class Player extends Component {
             <BootstrapTable
                 data={this.state.players}
                 striped
-                pagination
                 remote={ true }
                 selectRow={this.selectRowProp}
-                options={{onRowMouseOver: this.onRowMouseOver, afterSearch: this.afterSearch }}
+                options={options}
                 search={true}
                 hover>
               <TableHeaderColumn isKey dataField='uuid' hidden={true}/>
@@ -277,6 +296,20 @@ export default class Player extends Component {
               <TableHeaderColumn dataField='guest' dataFormat={Player.checkboxFormatter } width={"20%"} dataAlign={'center'}>Guest</TableHeaderColumn>
               <TableHeaderColumn dataFormat={() => this.buttonsFormatter(this.onDeleteRow, this.onEditRow)} width={"80px"} />
             </BootstrapTable>
+
+            <Pagination
+                prev
+                next
+                first
+                last
+                ellipsis
+                boundaryLinks
+                items={this.state.page.totalPages}
+                maxButtons={5}
+                activePage={this.state.activePage}
+                onSelect={this.onPageSelect}
+                style={{marginTop:'5px'}}
+            />
           </Grid>
         </div>
     )
