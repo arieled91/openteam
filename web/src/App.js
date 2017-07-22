@@ -25,7 +25,7 @@ export default class App extends Component {
               <Navbar.Collapse>
                 <Nav>
                   <NavItem><Link to="/">Home</Link></NavItem>
-                  <NavItem><Link to="/player">Player</Link></NavItem>
+                  <NavItem><Link to="/players">Players</Link></NavItem>
 
                 </Nav>
                 <Nav pullRight>
@@ -36,7 +36,7 @@ export default class App extends Component {
             </Navbar>
             <Route exact path="/" component={Home}/>
             <Route path="/about" component={About}/>
-            <Route path="/player" component={Player}/>
+            <Route path="/players" component={Player}/>
           </div>
         </Router>
     );
