@@ -1,6 +1,6 @@
 const URL = "http://localhost:8888/api/";
 
-export const client = (path, prop)=>{
+export const clientJson = (path, prop)=>{
   return fetch(path, prop)
   .then(handleErrors)
   .then((response)=>{
@@ -8,12 +8,12 @@ export const client = (path, prop)=>{
   })
 };
 
-export const clientGet = (path, prop)=>{
-    return client(URL+path, prop)
+export const client = (path, prop)=>{
+    return clientJson(URL+path, prop)
 };
 
 export const clientPost = (path, entity) => {
-  return clientGet(path,
+  return client(path,
       {
         method: "POST",
         headers: {
@@ -25,7 +25,7 @@ export const clientPost = (path, entity) => {
 };
 
 export const clientPatch = (path, entity) => {
-  return client(path,
+  return clientJson(path,
       {
         method: "PATCH",
         headers: {

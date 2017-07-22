@@ -7,7 +7,7 @@ import {
 
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {FieldGroup} from "./common/FieldGroup";
-import {clientGet, clientPatch, clientPost} from "./common/Api";
+import {client, clientPatch, clientPost} from "./common/Api";
 import {Message} from "./common/Message";
 import CheckboxFormatter from "./common/CheckboxFormatter";
 
@@ -15,8 +15,7 @@ const uuidv4 = require('uuid/v4');
 
 export default class Player extends Component {
 
-  static PAGE_SIZE = 5;
-  static MAX_ROW_SIZE = 100;
+  static PAGE_SIZE = 15;
 
   constructor(props){
     super(props);
@@ -26,7 +25,7 @@ export default class Player extends Component {
       currentRow : {},
       editMode : false,
       searchText : "",
-      activePage : 1,
+      activePage: Number,
       page: {
         size: Number,
         totalElements: Number,
@@ -52,19 +51,20 @@ export default class Player extends Component {
   }
 
   componentDidMount() {
-    this.populate();
+    this.populate(0);
   }
 
-  populate(){
+  populate(pageNumber){
       let searchText = this.state.searchText;
-      clientGet(
-          "players/search/findByNameIgnoreCaseContainingOrderByName?name="+searchText+
+      client(
+          "players/search/findByNameContaining?name="+searchText+"&active=true&sort=name"+
           "&size="+Player.PAGE_SIZE+
-          "&page="+(this.state.activePage))
+          "&page="+pageNumber)
         .then((entity) => {
           const players = entity._embedded.players;
           players.forEach((player)=>{player.uuid = uuidv4()});
           this.setState({
+              activePage: pageNumber+1,
               players: players,
               page : entity.page
           })
@@ -148,13 +148,15 @@ export default class Player extends Component {
     if (window.confirm("Are you sure you want to remove the player?")) {
       const row = this.state.currentRow;
 
-      let filtered = this.state.players.filter(player => {
-        return player.uuid !== row.uuid;
-      });
+      let players =  this.state.players;
+      const player = players.find(
+          player => player.uuid===row.uuid
+      );
 
-      this.setState({
-          players: filtered
-      });
+
+      player.active = false;
+
+      this.patch(player, player._links.self.href);
 
       this.reset();
     }
@@ -171,13 +173,11 @@ export default class Player extends Component {
     this.playerName.focus();
   }
 
-  onPageSelect(page) {
-    console.log(page);
-      this.setState({
-          activePage: page
-      });
-
-      this.populate();
+  onPageSelect(eventKey) {
+    this.setState({
+      activePage: eventKey
+    });
+    this.populate(eventKey-1);
   }
 
 
