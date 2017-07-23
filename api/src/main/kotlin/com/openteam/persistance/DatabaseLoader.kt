@@ -5,10 +5,12 @@ import com.openteam.model.Player
 import com.openteam.repository.EventRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
+@Profile("dev")
 class DatabaseLoader : CommandLineRunner {
 
     @Autowired lateinit var eventDao: EventRepository
