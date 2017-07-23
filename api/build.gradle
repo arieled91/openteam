@@ -50,3 +50,6 @@ dependencies {
     compile ('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.9')
     compile ('net.sourceforge.nekohtml:nekohtml:1.9.21')
 }
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
