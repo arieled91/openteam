@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class OpenteamApplication
+open class OpenteamApplication
 
 fun main(args: Array<String>) {
     SpringApplication.run(OpenteamApplication::class.java, *args)
