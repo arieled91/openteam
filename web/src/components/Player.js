@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-    Button,
-    Checkbox, Col, FormGroup, Glyphicon, Grid, Pagination, Row
+  Button, Checkbox, Col, Form, FormGroup, Glyphicon, Grid, Pagination, Row
 } from "react-bootstrap";
 
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
@@ -46,6 +45,12 @@ export default class Player extends Component {
     this.onEditRow = this.onEditRow.bind(this);
     this.onPageSelect = this.onPageSelect.bind(this);
     this.reset = this.reset.bind(this);
+  }
+  componentWillMount(){
+    this.setState({
+      activePage: 1,
+      page: {totalPages: 1}
+    })
   }
 
   componentDidMount() {
@@ -221,7 +226,7 @@ export default class Player extends Component {
     return (
         <div>
           <Grid>
-            <form onSubmit={this.onSubmit}>
+            <Form onSubmit={this.onSubmit}>
               <Row>
                 <FieldGroup
                     id="playerName"
@@ -270,7 +275,7 @@ export default class Player extends Component {
                   </FormGroup>
                 </Col>
               </Row>
-            </form>
+            </Form>
 
             <BootstrapTable
                 data={this.state.players}
