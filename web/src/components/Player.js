@@ -8,8 +8,8 @@ import {
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {FieldGroup} from "./common/FieldGroup";
 import {client, clientPatch, clientPost} from "./common/Api";
-import {Message} from "./common/Message";
 import CheckboxFormatter from "./common/CheckboxFormatter";
+import {appError} from "./common/Message";
 
 const uuidv4 = require('uuid/v4');
 
@@ -21,7 +21,6 @@ export default class Player extends Component {
     super(props);
     this.state = {
       players : [],
-      errorMessage : String,
       currentRow : {},
       editMode : false,
       searchText : "",
@@ -43,7 +42,6 @@ export default class Player extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteRow = this.onDeleteRow.bind(this);
     this.onRowMouseOver = this.onRowMouseOver.bind(this);
-    this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
     this.afterSearch = this.afterSearch.bind(this);
     this.onEditRow = this.onEditRow.bind(this);
     this.onPageSelect = this.onPageSelect.bind(this);
@@ -55,29 +53,30 @@ export default class Player extends Component {
   }
 
   populate(pageNumber){
-      let searchText = this.state.searchText;
-      client(
-          "players/search/findByNameContaining?name="+searchText+"&active=true&sort=name"+
-          "&size="+Player.PAGE_SIZE+
-          "&page="+pageNumber)
-        .then((entity) => {
-          const players = entity._embedded.players;
-          players.forEach((player)=>{player.uuid = uuidv4()});
-          this.setState({
-              activePage: pageNumber+1,
-              players: players,
-              page : entity.page
-          })
-      }).catch((e)=>{
-          this.setState({errorMessage: "Back-end server error"})
-      })
+    let searchText = this.state.searchText;
+    client(
+        "players/search/findByNameContaining?name="+searchText+"&active=true&sort=name"+
+        "&size="+Player.PAGE_SIZE+
+        "&page="+pageNumber)
+      .then((entity) => {
+        const players = entity._embedded.players;
+        players.forEach((player)=>{player.uuid = uuidv4()});
+        this.setState({
+            activePage: pageNumber+1,
+            players: players,
+            page : entity.page
+        })
+    }).catch((e)=>{
+      appError("Server error");
+    });
+
   }
 
   post(newPlayer){
     clientPost("players", newPlayer).then((player) => {
       this.populate();
     }).catch((e)=>{
-      this.setState({errorMessage: "Back-end server error"})
+      appError("Server error");
     })
   }
 
@@ -85,12 +84,8 @@ export default class Player extends Component {
     clientPatch(path, updatePlayer).then((player) => {
       this.populate();
     }).catch((e)=>{
-      this.setState({errorMessage: "Back-end server error"})
+      appError("Server error");
     })
-  }
-
-  onDismissErrorMessage(){
-    this.setState({errorMessage : ""})
   }
 
   onRowMouseOver(row){
@@ -174,9 +169,6 @@ export default class Player extends Component {
   }
 
   onPageSelect(eventKey) {
-    this.setState({
-      activePage: eventKey
-    });
     this.populate(eventKey-1);
   }
 
@@ -228,7 +220,6 @@ export default class Player extends Component {
 
     return (
         <div>
-          <Message type="danger" message={this.state.errorMessage} onDismiss={this.onDismissErrorMessage}/>
           <Grid>
             <form onSubmit={this.onSubmit}>
               <Row>
@@ -236,7 +227,6 @@ export default class Player extends Component {
                     id="playerName"
                     type="text"
                     label="Name"
-                    // autoFocus
                     placeholder="Enter Name"
                     value={this.state.playerName}
                     onChange={this.playerNameChanged}

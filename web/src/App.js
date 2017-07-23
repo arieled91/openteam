@@ -9,36 +9,67 @@ import {
 import About from "./components/About";
 import {Nav, Navbar, NavItem} from "react-bootstrap";
 import Player from "./components/Player";
+import {Message} from "./components/common/Message";
 
 export default class App extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      errorMessage: String
+    };
+
+    this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
+    this.startErrorLog = this.startErrorLog.bind(this);
+  }
+
+  onDismissErrorMessage(){
+    this.setState({errorMessage : ""})
+  }
+
+  componentWillMount() {
+    this.startErrorLog();
+  }
+
+
+  startErrorLog() {
+    window.onerror = (message, file, line, column, errorObject) => {
+      this.setState({errorMessage: errorObject});
+      return false;
+    }
+  }
+
   render() {
     return (
-        <Router>
-          <div>
-            <Navbar inverse collapseOnSelect>
-              <Navbar.Header>
-                <Navbar.Brand>
-                  <a href="/">OpenTeam</a>
-                </Navbar.Brand>
-                <Navbar.Toggle />
-              </Navbar.Header>
-              <Navbar.Collapse>
-                <Nav>
-                  <NavItem><Link to="/">Home</Link></NavItem>
-                  <NavItem><Link to="/players">Players</Link></NavItem>
+        <div>
+          <Message type="danger" message={this.state.errorMessage} onDismiss={this.onDismissErrorMessage}/>
+          <Router>
+            <div>
+              <Navbar inverse collapseOnSelect>
+                <Navbar.Header>
+                  <Navbar.Brand>
+                    <a href="/">OpenTeam</a>
+                  </Navbar.Brand>
+                  <Navbar.Toggle />
+                </Navbar.Header>
+                <Navbar.Collapse>
+                  <Nav>
+                    <NavItem><Link to="/">Home</Link></NavItem>
+                    <NavItem><Link to="/players">Players</Link></NavItem>
 
-                </Nav>
-                <Nav pullRight>
-                  <NavItem><Link to="/about">About</Link></NavItem>
-                </Nav>
+                  </Nav>
+                  <Nav pullRight>
+                    <NavItem><Link to="/about">About</Link></NavItem>
+                  </Nav>
 
-              </Navbar.Collapse>
-            </Navbar>
-            <Route exact path="/" component={Home}/>
-            <Route path="/about" component={About}/>
-            <Route path="/players" component={Player}/>
-          </div>
-        </Router>
+                </Navbar.Collapse>
+              </Navbar>
+              <Route exact path="/" component={Home}/>
+              <Route path="/about" component={About}/>
+              <Route path="/players" component={Player}/>
+            </div>
+          </Router>
+        </div>
     );
   }
 }

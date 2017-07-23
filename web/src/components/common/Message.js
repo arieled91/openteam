@@ -27,3 +27,9 @@ const style = {
   transform: 'translate(-50%, 0)',
   whiteSpace: 'nowrap'
 };
+
+//this is a hack to throw errors inside a catch clause
+export function appError(msg) {
+  setTimeout(()=>{ throw msg; });
+}
+
