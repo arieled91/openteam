@@ -236,7 +236,7 @@ export default class Player extends Component {
                     id="playerName"
                     type="text"
                     label="Name"
-                    autoFocus
+                    // autoFocus
                     placeholder="Enter Name"
                     value={this.state.playerName}
                     onChange={this.playerNameChanged}

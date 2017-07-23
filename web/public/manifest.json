@@ -3,8 +3,23 @@
   "name": "Team Events Manager",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "192x192",
+      "src": "icons/team16.ico",
+      "sizes": "16x19",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/team24.ico",
+      "sizes": "24x24",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/team32.ico",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/team64.ico",
+      "sizes": "64x64",
       "type": "image/png"
     }
   ],
