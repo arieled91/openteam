@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:8888/",
+  "homepage": "https://arieled91.github.io/openteam/",
   "dependencies": {
     "fetch": "^1.1.0",
     "prop-types": "^15.5.10",
