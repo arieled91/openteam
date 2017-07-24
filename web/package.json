@@ -2,6 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8888/",
   "dependencies": {
     "fetch": "^1.1.0",
     "prop-types": "^15.5.10",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "auto-install-webpack-plugin": "^1.2.3",
+    "concurrently": "^3.5.0",
     "react-scripts": "1.0.10"
   },
   "scripts": {

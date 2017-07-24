@@ -1,4 +1,5 @@
-const URL = "http://localhost:8888/api/";
+const URL = "/api/";
+// const URL = "http://localhost:8888/api/";
 
 export const clientJson = (path, prop)=>{
   return fetch(path, prop)
