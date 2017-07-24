@@ -12,6 +12,6 @@ data class Player (
     var active: Boolean = true,
     var creationTime : LocalDateTime = LocalDateTime.now(),
 
-    @Id @GeneratedValue(strategy= GenerationType.AUTO)
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     var id : Long = 0
 )
