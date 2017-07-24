@@ -1,4 +1,6 @@
-const URL = "/api/";
+const URL = window.location.hostname === 'localhost' ? '' : 'https://openteamweb.herokuapp.com/';
+
+const API = URL+"api/";
 // const URL = "http://localhost:8888/api/";
 
 export const clientJson = (path, prop)=>{
@@ -10,7 +12,7 @@ export const clientJson = (path, prop)=>{
 };
 
 export const client = (path, prop)=>{
-    return clientJson(URL+path, prop)
+    return clientJson(API+path, prop)
 };
 
 export const clientPost = (path, entity) => {
