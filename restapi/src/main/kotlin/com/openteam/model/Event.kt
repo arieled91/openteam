@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "event")
+@Table(name = "event"/*, schema = "openteam"*/)
 data class Event(
     var name: String = "",
 

@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "team")
+@Table(name = "team"/*, schema = "openteam"*/)
 data class Team (
     var name : String = "",
 
