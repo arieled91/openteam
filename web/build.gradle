@@ -48,7 +48,15 @@ task webjar(type: Jar, dependsOn: 'jar') {
     }
 }
 
+task copyDocs(type: Copy, dependsOn: 'assemble') {
+    from 'build'
+    into '../docs/'
+}
+
+build.finalizedBy(copyDocs)
+
 clean {
     delete 'dist'
     delete 'build'
+    delete '../docs'
 }
