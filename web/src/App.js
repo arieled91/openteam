@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import {
-  BrowserRouter as Router,
-  Link,
-  Route, HashRouter
+  Link, Route, HashRouter
 } from "react-router-dom";
 
 import About from "./components/About";
