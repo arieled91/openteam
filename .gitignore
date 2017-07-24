@@ -3,6 +3,8 @@ build/
 out/
 !gradle/wrapper/gradle-wrapper.jar
 *.log
+.env
+.DS_Store
 
 ### STS ###
 .apt_generated
@@ -17,6 +19,8 @@ out/
 *.iws
 *.iml
 *.ipr
+
+
 
 ### NetBeans ###
 nbproject/private/

@@ -1,4 +1,5 @@
 {
   "name": "OpenTeam",
-  "description": "OpenTeam App"
+  "description": "OpenTeam App",
+  "addons": [ "heroku-postgresql" ]
 }
