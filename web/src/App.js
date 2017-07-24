@@ -3,7 +3,7 @@ import './App.css';
 import {
   BrowserRouter as Router,
   Link,
-  Route
+  Route, HashRouter
 } from "react-router-dom";
 
 import About from "./components/About";
@@ -43,12 +43,12 @@ export default class App extends Component {
     return (
         <div>
           <Message type="danger" message={this.state.errorMessage} onDismiss={this.onDismissErrorMessage}/>
-          <Router>
+          <HashRouter>
             <div>
               <Navbar inverse collapseOnSelect>
                 <Navbar.Header>
                   <Navbar.Brand>
-                    <a href="/">OpenTeam</a>
+                    OpenTeam
                   </Navbar.Brand>
                   <Navbar.Toggle />
                 </Navbar.Header>
@@ -68,7 +68,7 @@ export default class App extends Component {
               <Route path="/about" component={About}/>
               <Route path="/players" component={Player}/>
             </div>
-          </Router>
+          </HashRouter>
         </div>
     );
   }
