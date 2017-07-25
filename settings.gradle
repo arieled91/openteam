@@ -1,2 +1,2 @@
-include 'restapi'
+include 'api'
 include 'web'

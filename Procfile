@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar restapi/build/libs/openteam-api-1.0.jar
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar api/build/libs/openteam-api-1.0.jar

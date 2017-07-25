@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "team")
+@Table(name = "team", schema = "openteam")
 data class Team (
     var name : String = "",
 
@@ -14,6 +14,6 @@ data class Team (
 
     var creationTime : LocalDateTime = LocalDateTime.now(),
 
-    @Id @GeneratedValue(strategy= GenerationType.AUTO)
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     var id : Long = 0
 )
