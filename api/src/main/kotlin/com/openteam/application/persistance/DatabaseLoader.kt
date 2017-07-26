@@ -7,12 +7,11 @@ import com.openteam.common.Dev
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
-import java.awt.print.Pageable
 import java.time.LocalDateTime
 
 
 @Dev @Component
-class DatabaseLoader : CommandLineRunner {
+class DatabaseLoader : CommandLineRunner { //master
 
     @Autowired lateinit var eventDao: EventRepository
     @Autowired lateinit var playerDao: EventRepository
