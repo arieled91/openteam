@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Profile
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-@Profile("dev")
-annotation class Dev
+@Profile("!production")
+annotation class NotProduction
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
