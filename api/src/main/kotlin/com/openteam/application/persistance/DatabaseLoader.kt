@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 
 @Dev @Component
-class DatabaseLoader : CommandLineRunner { //master
+class DatabaseLoader : CommandLineRunner {
 
     @Autowired lateinit var eventDao: EventRepository
     @Autowired lateinit var playerDao: EventRepository
