@@ -1,4 +1,4 @@
-package com.openteam.controller
+package com.openteam.application.controller
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

@@ -1,16 +1,16 @@
-package com.openteam.persistance
+package com.openteam.application.persistance
 
-import com.openteam.model.Event
-import com.openteam.model.Player
-import com.openteam.repository.EventRepository
+import com.openteam.application.model.Event
+import com.openteam.application.model.Player
+import com.openteam.application.repository.EventRepository
+import com.openteam.common.Dev
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
-@Component
-@Profile("dev")
+
+@Dev @Component
 class DatabaseLoader : CommandLineRunner {
 
     @Autowired lateinit var eventDao: EventRepository

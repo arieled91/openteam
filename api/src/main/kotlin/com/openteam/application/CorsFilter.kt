@@ -1,4 +1,4 @@
-package com.openteam
+package com.openteam.application
 
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter

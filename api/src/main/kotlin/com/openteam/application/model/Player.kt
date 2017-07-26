@@ -1,4 +1,4 @@
-package com.openteam.model
+package com.openteam.application.model
 
 import java.time.LocalDateTime
 import javax.persistence.*

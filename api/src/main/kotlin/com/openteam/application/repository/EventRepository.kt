@@ -1,8 +1,8 @@
-package com.openteam.repository
+package com.openteam.application.repository
 
-import com.openteam.model.Event
-import com.openteam.model.Player
-import com.openteam.model.Team
+import com.openteam.application.model.Event
+import com.openteam.application.model.Player
+import com.openteam.application.model.Team
 import org.hibernate.boot.model.source.spi.Orderable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

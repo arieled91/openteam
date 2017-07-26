@@ -1,4 +1,4 @@
-package com.openteam
+package com.openteam.application
 
 import org.junit.Test
 import org.junit.runner.RunWith
