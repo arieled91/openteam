@@ -50,10 +50,7 @@ export default class Player extends Component {
     this.setState({
       activePage: 1,
       page: {totalPages: 1}
-    })
-  }
-
-  componentDidMount() {
+    });
     this.populate(0);
   }
 
