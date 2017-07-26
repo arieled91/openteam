@@ -7,6 +7,7 @@ import com.openteam.common.Dev
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
+import java.awt.print.Pageable
 import java.time.LocalDateTime
 
 
@@ -14,10 +15,11 @@ import java.time.LocalDateTime
 class DatabaseLoader : CommandLineRunner {
 
     @Autowired lateinit var eventDao: EventRepository
-//    @Autowired lateinit var environment : Environment
+    @Autowired lateinit var playerDao: EventRepository
 
     override fun run(vararg args: String?) {
 
+        if(playerDao.findAll().count()==0) {
             val event = this.eventDao.save(Event("Futbol", LocalDateTime.of(2017, 7, 7, 19, 0)))
 
             event.teams.get(0).players.add(Player("Ariel", "ariel@gmail.com"))
@@ -25,6 +27,7 @@ class DatabaseLoader : CommandLineRunner {
             event.teams.get(0).players.add(Player("Carlos", "", true))
 
             eventDao.save(event)
-//
+        }
+
     }
 }
