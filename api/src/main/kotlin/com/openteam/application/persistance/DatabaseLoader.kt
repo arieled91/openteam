@@ -15,6 +15,7 @@ class DatabaseLoader : CommandLineRunner {
 
     @Autowired lateinit var eventDao: EventRepository
 
+    @Dev
     override fun run(vararg args: String?) {
 
         val event = this.eventDao.save(Event("Futbol", LocalDateTime.of(2017, 7, 7, 19, 0)))
