@@ -76,7 +76,7 @@ export default class Player extends Component {
 
   post(newPlayer){
     clientPost("players", newPlayer).then((player) => {
-      this.populate();
+      this.populate(0);
     }).catch((e)=>{
       appError("Server error");
     })
@@ -84,7 +84,7 @@ export default class Player extends Component {
 
   patch(updatePlayer, path){
     clientPatch(path, updatePlayer).then((player) => {
-      this.populate();
+      this.populate(0);
     }).catch((e)=>{
       appError("Server error");
     })
@@ -100,7 +100,7 @@ export default class Player extends Component {
     else
       this.setState({searchText: ""});
 
-    this.populate()
+    this.populate(0)
   }
 
   onSubmit(e){
