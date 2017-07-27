@@ -7,6 +7,7 @@ import {
 import About from "./components/About";
 import {Nav, Navbar, NavItem} from "react-bootstrap";
 import Player from "./components/Player";
+import Event from "./components/Event";
 import {Message} from "./components/common/Message";
 
 export default class App extends Component {
@@ -54,6 +55,7 @@ export default class App extends Component {
                   <Nav>
                     <NavItem><Link to="/">Home</Link></NavItem>
                     <NavItem><Link to="/players">Players</Link></NavItem>
+                    <NavItem><Link to="/event">Event</Link></NavItem>
 
                   </Nav>
                   <Nav pullRight>
@@ -65,6 +67,7 @@ export default class App extends Component {
               <Route exact path="/" component={Home}/>
               <Route path="/about" component={About}/>
               <Route path="/players" component={Player}/>
+              <Route path="/event/:id" component={Event}/>
             </div>
           </HashRouter>
         </div>
