@@ -9,6 +9,7 @@ import {Nav, Navbar, NavItem} from "react-bootstrap";
 import Player from "./components/Player";
 import Event from "./components/Event";
 import {Message} from "./components/common/Message";
+import {ping} from "./components/common/Api";
 
 export default class App extends Component {
 
@@ -28,6 +29,7 @@ export default class App extends Component {
 
   componentWillMount() {
     this.startErrorLog();
+    console.log(ping());
   }
 
 
