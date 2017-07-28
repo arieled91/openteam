@@ -9,27 +9,42 @@ import {Nav, Navbar, NavItem} from "react-bootstrap";
 import Player from "./components/Player";
 import Event from "./components/Event";
 import {Message} from "./components/common/Message";
-import {ping} from "./components/common/Api";
+import {health} from "./components/common/Api";
 
 export default class App extends Component {
 
   constructor(props){
     super(props);
     this.state = {
-      errorMessage: String
+      errorMessage: String,
+      infoMessage: String,
+      serverStatus : String
     };
 
-    this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
     this.startErrorLog = this.startErrorLog.bind(this);
+    this.onDismissInfoMessage = this.onDismissInfoMessage.bind(this);
+    this.onDismissErrorMessage = this.onDismissErrorMessage.bind(this);
   }
 
   onDismissErrorMessage(){
     this.setState({errorMessage : ""})
   }
 
+  onDismissInfoMessage(){
+    this.setState({infoMessage : ""})
+  }
+
   componentWillMount() {
-    this.startErrorLog();
-    console.log(ping());
+      this.startErrorLog();
+      this.setState({infoMessage: "Waiting for server, please wait"});
+  }
+
+  componentDidMount() {
+    health().then((response)=> {
+      this.setState({ infoMessage: "" });
+      if(!response.ok)
+        this.setState({ errorMessage: response.statusText })
+    })
   }
 
 
@@ -44,6 +59,7 @@ export default class App extends Component {
     return (
         <div>
           <Message type="danger" message={this.state.errorMessage} onDismiss={this.onDismissErrorMessage}/>
+          <Message type="info" message={this.state.infoMessage} onDismiss={this.onDismissInfoMessage}/>
           <HashRouter>
             <div>
               <Navbar inverse collapseOnSelect>

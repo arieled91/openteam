@@ -3,9 +3,9 @@ const URL = window.location.hostname === 'localhost' ? '' : 'https://openteamweb
 const API = URL+"api/";
 // const URL = "http://localhost:8888/api/";
 
-export const ping = ()=>{
-  return fetch(URL+'ping').then((response)=>{
-    console.log('Backend Status: '+response.status);
+export const health = ()=>{
+  return fetch(URL+'health').then((response)=>{
+    console.log(response);
     return response
   });
 };
