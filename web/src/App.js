@@ -85,7 +85,7 @@ export default class App extends Component {
               <Route exact path="/" component={Home}/>
               <Route path="/about" component={About}/>
               <Route path="/players" component={Player}/>
-              <Route path="/event/:id" component={Event}/>
+              <Route path="/event/:id?" component={Event}/>
             </div>
           </HashRouter>
         </div>
