@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
 import {
-    Form, Grid, Row, Table
+  Button, Col, ControlLabel, Form, FormGroup, Glyphicon, Grid, ListGroup,
+  ListGroupItem, Row
 } from "react-bootstrap";
 
-import {FieldGroup} from "./common/FieldGroup";
+import {FieldGroup, SearchBox} from "./common/Inputs";
 import {client, clientLink, clientPatch, clientPost} from "./common/Api";
 import {appError} from "./common/Message";
 import {isDefined} from "../common/Util";
@@ -21,6 +22,8 @@ export default class Event extends Component {
 
       eventName : "",
       eventDate : "",
+      playerSearch : "",
+      playerSearchSuggestions : [],
       editMode : false
     };
 
@@ -31,6 +34,8 @@ export default class Event extends Component {
     this.onDrop = this.onDrop.bind(this);
     this.onDragEnter = this.onDragEnter.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
+    this.onSearchPlayer = this.onSearchPlayer.bind(this);
+    this.onClickAddPlayer = this.onClickAddPlayer.bind(this);
   }
   componentWillMount(){
       this.populate();
@@ -38,27 +43,48 @@ export default class Event extends Component {
 
   populate(){
       if(isDefined(this.state.id)) {
-          client("events/" + this.state.id).then((entity) => {
+        client("events/search/findByUuid?uuid="+this.state.id).then((entity) => {
               clientLink(entity._links.teams.href).then((teamsResponse) => {
                   this.setState({
                       event: entity,
                       eventName: entity.name,
                       eventDate: entity.dateTime,
-                      teams: teamsResponse._embedded.teams
+                      teams: teamsResponse._embedded.teams,
+                      editMode: true
                   });
               });
           }).catch((e) => {
               appError("Server error");
           });
       }
+
+      this.populatePlayerSuggestions();
+  }
+
+  populatePlayerSuggestions(){
+    client(
+        "players/search/findByNameContaining?name="+this.state.playerSearch+"&active=true&size="+10)
+    .then((entity) => {
+      const players = entity._embedded.players;
+      players.forEach((player)=>{
+        player.sortKey = player._links.self.href;
+        player.value = player.name;
+      });
+      this.setState({
+        playerSearchSuggestions : players
+      })
+    }).catch((e)=>{
+      appError("Server error");
+    });
   }
 
   post(entity){
-    // clientPost("players", entity).then(() => {
-    //   this.populate();
-    // }).catch((e)=>{
-    //   appError("Server error");
-    // })
+    clientPost("events", entity).then((entity) => {
+      this.setState({id: entity.uuid});
+      this.populate();
+    }).catch((e)=>{
+      appError("Server error");
+    })
   }
 
   patch(entity, path){
@@ -82,14 +108,13 @@ export default class Event extends Component {
   }
 
   create(e){
-    // this.post(this.copyTo({}));
+    this.post(this.copyTo({}));
   }
 
-  copyTo(player){
-    // player.name = this.state.playerName;
-    // player.email = this.state.playerEmail;
-    // player.guest = this.state.playerGuest;
-    // return player;
+  copyTo(event){
+    event.name = this.state.eventName;
+    event.dateTime = this.state.eventDate;
+    return event;
   }
 
   update(e){
@@ -116,6 +141,21 @@ export default class Event extends Component {
       console.log(component, e);
   };
 
+  onClickAddPlayer(){
+    const playerSearch = this.state.playerSearch;
+
+    clientPost(this.state.teams[0]._links.players.href, playerSearch).then((entity) => {
+      console.log("posted",entity);
+    }).catch((e)=>{
+      appError("Server error");
+    })
+  }
+
+
+  onSearchPlayer(search, page, prev) {
+    this.populatePlayerSuggestions();
+  };
+
 
   eventNameChanged = (event) => {
     this.setState({ eventName: event.target.value });
@@ -124,6 +164,12 @@ export default class Event extends Component {
   eventDateChanged = (event) => {
     this.setState({ eventDate: event.target.value });
   };
+
+  playerSearchChanged = (value) => {
+    this.setState({ playerSearch: value });
+    console.log(value)
+  };
+
 
 
 
@@ -157,16 +203,48 @@ export default class Event extends Component {
                     colmd={4}
                     required
                 />
+
+                <Col xs={5} md={2}>
+                  <FormGroup>
+                    <Button type="submit" className={"btn btn-primary "+(this.state.editMode ? "hide":"")} style={{marginTop:"25px"}}>
+                      <Glyphicon glyph="plus" style={{marginRight:'5px'}}/>
+                      Add
+                    </Button>
+                    <Button type="submit" className={"btn btn-success "+(this.state.editMode ? "":"hide")} style={{marginTop:"25px"}}>
+                      <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
+                      Save
+                    </Button>
+                    <Button className={"btn btn-default "+(isDefined(this.state.id) ? "":"hide")} style={{marginTop:"25px", marginLeft:'20px'}} onClick={this.reset}>
+                      <Glyphicon glyph="remove" style={{marginRight:'5px'}}/>
+                    </Button>
+                  </FormGroup>
+                </Col>
               </Row>
-
-              {/*<div id="caja1" draggable="true" onDragStart={this.onDragStart()}> <span>Caja 1</span></div>*/}
-              {/*<div id="caja2" draggable="true" onDragStart={this.onDragStart()}> <span>Caja 2</span></div>*/}
-              {/*<div id="contenedor" onDrop={this.onDrop()} onDragEnter={this.onDragEnter()} onDragOver={this.onDragOver()} > <span>Contenedor</span></div>*/}
-
-              <div style={{width: '200px'}}>
-                  <Team team={this.state.teams[0]}/>
+              <div id="eventTeamPlayers" hidden={!isDefined(this.state.id)}>
+                <Row>
+                  <SearchBox
+                      id="playerSearch"
+                      label="Add Player"
+                      colxs={7}
+                      colmd={4}
+                      value={this.state.playerSearch}
+                      onSearch={this.onSearchPlayer}
+                      onChange={this.playerSearchChanged}
+                      suggestions={this.state.playerSearchSuggestions}
+                      searchDebounce={300}
+                      placeholder="Enter player to add"
+                  />
+                  <Button
+                      style={{marginTop:"25px"}}
+                      className={"btn btn-primary"}
+                      onClick={this.onClickAddPlayer}>
+                        <Glyphicon glyph="plus"/>
+                  </Button>
+                </Row>
+                <div>
+                    <Team team={this.state.teams[0]}/>
+                </div>
               </div>
-
             </Form>
 
 
@@ -224,50 +302,47 @@ class Team extends Component {
 
     render() {
 
-        const center = {textAlign: 'center'};
+        const style = {textAlign: 'center', minWidth: '200px'};
 
         if(isDefined(this.state.team)) {
             return (
-                <div>
-                    <Table condensed hover  style={center}>
-                        <thead>
-                        <tr>
-                            <th>{this.state.team.name}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                isDefined(this.state.players) ? this.state.players.map((player) =>
-                                <PlayerRow key={player.id}  player={player}/>)  : <tr/>
-                            }
-                        </tbody>
-                    </Table>
-                </div>
+                <Row>
+                  <Col xs={5} md={2}>
+                    <ControlLabel>{this.state.team.name}</ControlLabel>
+                    <ListGroup condensed hover style={style}>
+                      {
+                        isDefined(this.state.players) ? this.state.players.map((player) =>
+                            <ListGroupItem key={player.id} draggable="true">{player.name}</ListGroupItem>)  : <ListGroupItem/>
+                      }
+
+                    </ListGroup>
+                  </Col>
+                </Row>
             )
         }else {
-            return (<div>Loading...</div>)
+            return (<div/>)
         }
     }
 }
 
-class PlayerRow extends Component{
-    constructor(props){
-      super(props);
-    }
-
-    static propTypes = {
-        player: React.PropTypes.object.isRequired
-    };
-
-    render() {
-
-        return (
-            <tr key={this.props.player.id} draggable="true">
-                {<td>{this.props.player.name}</td>}
-            </tr>
-        )
-    }
-
-
-}
+// class PlayerRow extends Component{
+//     constructor(props){
+//       super(props);
+//     }
+//
+//     static propTypes = {
+//         player: React.PropTypes.object.isRequired
+//     };
+//
+//     render() {
+//
+//         return (
+//             <tr key={this.props.player.id} draggable="true">
+//                 {<td>{this.props.player.name}</td>}
+//             </tr>
+//         )
+//     }
+//
+//
+// }
 

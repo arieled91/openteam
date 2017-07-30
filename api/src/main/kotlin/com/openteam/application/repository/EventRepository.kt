@@ -13,7 +13,9 @@ import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.data.web.PageableDefault
 
-interface EventRepository : CrudRepository<Event, Long>, PagingAndSortingRepository<Event, Long>
+interface EventRepository : CrudRepository<Event, Long>, PagingAndSortingRepository<Event, Long>{
+    fun findByUuid(@Param("uuid") uuid : String) : Event
+}
 
 
 interface PlayerRepository : CrudRepository<Player, Long>, PagingAndSortingRepository<Player, Long>{

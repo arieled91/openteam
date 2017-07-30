@@ -1,8 +1,11 @@
 package com.openteam.application.model
 
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+import org.hibernate.id.UUIDGenerator
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -18,6 +21,8 @@ data class Event(
     var teams: MutableList<Team> =  arrayListOf(Team("default")),
 
     var creationTime : LocalDateTime = LocalDateTime.now(),
+
+    var uuid : String = UUID.randomUUID().toString(),
 
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     private var id: Long = 0
