@@ -8,7 +8,7 @@ import javax.persistence.*
 data class Team (
     var name : String = "",
 
-    @OneToMany(cascade = arrayOf(CascadeType.ALL))
+    @ManyToMany(cascade = arrayOf(CascadeType.ALL))
     @JoinTable(name = "team_players", joinColumns = arrayOf(JoinColumn(name = "key")), inverseJoinColumns = arrayOf(JoinColumn(name = "team_id")))
     var players: MutableList<Player> = arrayListOf(),
 

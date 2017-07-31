@@ -6,7 +6,10 @@ import {
 } from "react-bootstrap";
 
 import {FieldGroup, SearchBox} from "./common/Inputs";
-import {client, clientLink, clientPatch, clientPost} from "./common/Api";
+import {
+  client, clientAdd, clientLink, clientPatch,
+  clientPost
+} from "./common/Api";
 import {appError} from "./common/Message";
 import {isDefined} from "../common/Util";
 
@@ -66,7 +69,8 @@ export default class Event extends Component {
         "players/search/findByNameContaining?name="+this.state.playerSearch+"&active=true&size="+10)
     .then((entity) => {
       const players = entity._embedded.players;
-      players.forEach((player)=>{
+      players
+      .forEach((player)=>{
         player.sortKey = player._links.self.href;
         player.value = player.name;
       });
@@ -142,13 +146,9 @@ export default class Event extends Component {
   };
 
   onClickAddPlayer(){
-    const playerSearch = this.state.playerSearch;
-
-    clientPost(this.state.teams[0]._links.players.href, playerSearch).then((entity) => {
-      console.log("posted",entity);
-    }).catch((e)=>{
-      appError("Server error");
-    })
+    const playerLink = this.state.playerSearch.sortKey;
+    clientAdd(this.state.teams[0]._links.players.href, playerLink);
+    this.setState({playerSearch: ""})
   }
 
 
@@ -167,7 +167,6 @@ export default class Event extends Component {
 
   playerSearchChanged = (value) => {
     this.setState({ playerSearch: value });
-    console.log(value)
   };
 
 
@@ -235,6 +234,7 @@ export default class Event extends Component {
                       placeholder="Enter player to add"
                   />
                   <Button
+                      disabled={!isDefined(this.state.playerSearch)}
                       style={{marginTop:"25px"}}
                       className={"btn btn-primary"}
                       onClick={this.onClickAddPlayer}>

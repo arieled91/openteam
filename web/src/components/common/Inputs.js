@@ -26,16 +26,13 @@ export const FieldGroup = ({ id, label, help, colxs, colmd, ...props })=>{
 };
 
 export const SearchBox = ({...props })=>{
-  const hideAutoFillColorStyle = {
-    WebkitBoxShadow: '0 0 0 1000px white inset'
-  };
-
   return (
       <Col xs={props.colxs} md={props.colmd}>
         <FormGroup controlId={props.id}
                    bsSize={props.bsSize} validationState={props.validationState}>
           <ControlLabel>{props.label}</ControlLabel>
           <Autosuggest
+              valueIsItem
               datalist={props.suggestions}
               placeholder={props.placeholder}
               value={props.value}

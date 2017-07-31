@@ -27,4 +27,11 @@ interface PlayerRepository : CrudRepository<Player, Long>, PagingAndSortingRepos
 
 
 
-interface TeamRepository : CrudRepository<Team, Long>, PagingAndSortingRepository<Team, Long>
+interface TeamRepository : CrudRepository<Team, Long>, PagingAndSortingRepository<Team, Long>{
+    @Query("""
+    select p from Player p
+            where upper(p.name) like upper(concat('%', :name,'%'))
+            and p.active = true
+    """)
+    fun listAvailablePlayersByName()
+}

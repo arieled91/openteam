@@ -5,17 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-//@RestController
-//@RequestMapping("/api")
+@RestController
+@RequestMapping("/api")
 open class EventController {
 
     @Autowired lateinit var eventDao : EventRepository
 
 //    @CrossOrigin("*")
-//    @RequestMapping("/events")
+//    @RequestMapping("/events/{}")
 //    open fun postEvents() : String
 //    {
-//        eventDao.
-//        return "OK"
+//
 //    }
 }

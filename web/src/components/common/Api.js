@@ -34,6 +34,17 @@ export const clientPost = (path, entity) => {
       })
 };
 
+export const clientAdd = (resourcePath, entityPath) => {
+  return clientLink(resourcePath,
+      {
+        method: "PATCH",
+        headers: {
+          'Content-Type': 'text/uri-list'
+        },
+        body: entityPath
+      })
+};
+
 export const clientPatch = (path, entity) => {
   return clientLink(path,
       {
