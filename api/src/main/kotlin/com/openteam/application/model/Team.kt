@@ -10,7 +10,7 @@ data class Team (
 
     @ManyToMany(cascade = arrayOf(CascadeType.ALL))
     @JoinTable(name = "team_players", joinColumns = arrayOf(JoinColumn(name = "key")), inverseJoinColumns = arrayOf(JoinColumn(name = "team_id")))
-    var players: MutableList<Player> = arrayListOf(),
+    var players: MutableSet<Player> = mutableSetOf(),
 
     var creationTime : LocalDateTime = LocalDateTime.now(),
 

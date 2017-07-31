@@ -12,6 +12,7 @@ import {
 } from "./common/Api";
 import {appError} from "./common/Message";
 import {isDefined} from "../common/Util";
+import {dateTimeFormat} from "./common/Utils";
 
 export default class Event extends Component {
 
@@ -27,7 +28,9 @@ export default class Event extends Component {
       eventDate : "",
       playerSearch : "",
       playerSearchSuggestions : [],
-      editMode : false
+      eventSearchSuggestions : [],
+      editMode : false,
+      eventSearch : ""
     };
 
 
@@ -39,12 +42,15 @@ export default class Event extends Component {
     this.onDragOver = this.onDragOver.bind(this);
     this.onSearchPlayer = this.onSearchPlayer.bind(this);
     this.onClickAddPlayer = this.onClickAddPlayer.bind(this);
+    this.onSearchEvent = this.onSearchEvent.bind(this);
+    this.onClickEventSearch = this.onClickEventSearch.bind(this);
   }
   componentWillMount(){
       this.populate();
   }
 
   populate(){
+      console.log("events/search/findByUuid?uuid="+this.state.id);
       if(isDefined(this.state.id)) {
         client("events/search/findByUuid?uuid="+this.state.id).then((entity) => {
               clientLink(entity._links.teams.href).then((teamsResponse) => {
@@ -76,6 +82,26 @@ export default class Event extends Component {
       });
       this.setState({
         playerSearchSuggestions : players
+      })
+    }).catch((e)=>{
+      appError("Server error");
+    });
+  }
+
+  populateEventSuggestions(){
+    client(
+        "events/search/findByNameIgnoreCaseContainingOrderByDateTimeDesc?name="+this.state.eventSearch+"&size="+10)
+    .then((entity) => {
+      const events = entity._embedded.events;
+      events
+      .forEach((event)=>{
+        event.sortKey = event._links.self.href;
+        // event.value = event.name + " ("+dateFormat(event.dateTime, "dd/mm/yyyy, h:MM")+")";
+
+        event.value = event.name + " ("+dateTimeFormat(event.dateTime)+")";
+      });
+      this.setState({
+        eventSearchSuggestions : events
       })
     }).catch((e)=>{
       appError("Server error");
@@ -145,9 +171,13 @@ export default class Event extends Component {
       console.log(component, e);
   };
 
+  onSearchEvent(){
+    this.populateEventSuggestions();
+  }
+
   onClickAddPlayer(){
     const playerLink = this.state.playerSearch.sortKey;
-    clientAdd(this.state.teams[0]._links.players.href, playerLink);
+    clientAdd(this.state.teams[0]._links.players.href, playerLink).catch(()=>{});
     this.setState({playerSearch: ""})
   }
 
@@ -155,6 +185,14 @@ export default class Event extends Component {
   onSearchPlayer(search, page, prev) {
     this.populatePlayerSuggestions();
   };
+
+  onClickEventSearch(){
+    // const uuid = this.state.eventSearch.uuid;
+    // this.setState({id: uuid});
+    // this.populate();
+      this.props.history.push('/event/'+this.state.eventSearch.uuid);
+      this.props.history.go();
+  }
 
 
   eventNameChanged = (event) => {
@@ -169,6 +207,10 @@ export default class Event extends Component {
     this.setState({ playerSearch: value });
   };
 
+  eventSearchChanged = (value) => {
+    this.setState({ eventSearch: value });
+  };
+
 
 
 
@@ -177,6 +219,27 @@ export default class Event extends Component {
         <div>
           <Grid>
             <Form onSubmit={this.onSubmit}>
+              <Row>
+                <SearchBox
+                    id="eventSearch"
+                    label="Search"
+                    colxs={7}
+                    colmd={4}
+                    value={this.state.eventSearch}
+                    onSearch={this.onSearchEvent}
+                    onChange={this.eventSearchChanged}
+                    suggestions={this.state.eventSearchSuggestions}
+                    searchDebounce={300}
+                    placeholder="Event..."
+                />
+                <Button
+                  disabled={!isDefined(this.state.eventSearch)}
+                  style={{marginTop:"25px"}}
+                  className={"btn btn-primary"}
+                  onClick={this.onClickEventSearch}>
+                  <Glyphicon glyph="search"/>
+                </Button>
+              </Row>
               <Row>
                 <FieldGroup
                     id="eventName"
@@ -194,6 +257,7 @@ export default class Event extends Component {
                     id="eventDate"
                     type="datetime-local"
                     label="Date"
+                    min={this.state.currentDateTime}
                     placeholder="Enter Date"
                     value={this.state.eventDate}
                     onChange={this.eventDateChanged}
