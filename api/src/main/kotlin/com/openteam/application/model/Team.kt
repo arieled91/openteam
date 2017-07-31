@@ -6,14 +6,14 @@ import javax.persistence.*
 @Entity
 @Table(name = "team", schema = "openteam")
 data class Team (
-        var name : String = "",
+    var name : String = "",
 
-        @OneToMany(cascade = arrayOf(CascadeType.ALL))
+    @ManyToMany(cascade = arrayOf(CascadeType.ALL))
     @JoinTable(name = "team_players", joinColumns = arrayOf(JoinColumn(name = "key")), inverseJoinColumns = arrayOf(JoinColumn(name = "team_id")))
-    var players: MutableList<Player> = arrayListOf(),
+    var players: MutableSet<Player> = mutableSetOf(),
 
-        var creationTime : LocalDateTime = LocalDateTime.now(),
+    var creationTime : LocalDateTime = LocalDateTime.now(),
 
-        @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     var id : Long = 0
 )

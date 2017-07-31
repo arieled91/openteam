@@ -5,7 +5,7 @@ import {
 } from "react-bootstrap";
 
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import {FieldGroup} from "./common/FieldGroup";
+import {FieldGroup} from "./common/Inputs";
 import {client, clientPatch, clientPost} from "./common/Api";
 import CheckboxFormatter from "./common/CheckboxFormatter";
 import {appError} from "./common/Message";
@@ -251,22 +251,22 @@ export default class Player extends Component {
                     type="email"
                     label="Email address"
                     value={this.state.playerEmail}
-                    onChange={this.playerEmailChanged}
+                    onChange={this.playerSearchChanged}
                     placeholder="Enter email"
                     colxs={7}
                     colmd={4}
                 />
                 <Col xs={5} md={2}>
                   <FormGroup>
-                    <Button type="submit" className={"btn btn-primary "+(this.state.editMode ? "hide":"")} style={{marginTop:"24px"}}>
+                    <Button type="submit" className={"btn btn-primary "+(this.state.editMode ? "hide":"")} style={{marginTop:"25px"}}>
                       <Glyphicon glyph="plus" style={{marginRight:'5px'}}/>
                         Add
                     </Button>
-                    <Button type="submit" className={"btn btn-success "+(this.state.editMode ? "":"hide")} style={{marginTop:"24px"}}>
+                    <Button type="submit" className={"btn btn-success "+(this.state.editMode ? "":"hide")} style={{marginTop:"25px"}}>
                       <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
                       Save
                     </Button>
-                    <Button className={"btn btn-default "+(this.state.playerName!=="" ? "":"hide")} style={{marginTop:"24px", marginLeft:'20px'}} onClick={this.reset}>
+                    <Button className={"btn btn-default "+(this.state.playerName!=="" ? "":"hide")} style={{marginTop:"25px", marginLeft:'20px'}} onClick={this.reset}>
                       <Glyphicon glyph="remove" style={{marginRight:'5px'}}/>
                     </Button>
                   </FormGroup>

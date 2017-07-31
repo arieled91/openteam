@@ -1,5 +1,6 @@
 import React from 'react';
 import {Alert} from "react-bootstrap";
+import {isDefined, isDefinedString} from "../../common/Util";
 
 export const Message = ({...props})=>{
 
@@ -15,9 +16,6 @@ export const Message = ({...props})=>{
 
 };
 
-function isDefinedString(s) {
-  return s && typeof s === 'string'
-}
 
 const style = {
   position: 'absolute',
@@ -29,7 +27,8 @@ const style = {
 };
 
 //this is a hack to throw errors inside a catch clause
-export function appError(msg) {
+export function appError(msg, e) {
+  if(isDefined(e)) console.log(e);
   setTimeout(()=>{ throw msg; });
 }
 

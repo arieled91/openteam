@@ -1,16 +1,16 @@
-const URL = window.location.hostname === 'localhost' ? '' : 'https://openteamweb.herokuapp.com/';
+const URL = window.location.hostname === 'localhost' ? '/' : 'https://openteamweb.herokuapp.com/';
 
 const API = URL+"api/";
 // const URL = "http://localhost:8888/api/";
 
-export const ping = ()=>{
-  return fetch(URL+'ping').then((response)=>{
-    console.log('Backend Status: '+response.status);
+export const health = ()=>{
+  return fetch(URL+'health').then((response)=>{
+    console.log(response);
     return response
   });
 };
 
-export const clientJson = (path, prop)=>{
+export const clientLink = (path, prop)=>{
   return fetch(path, prop)
   .then(handleErrors)
   .then((response)=>{
@@ -19,7 +19,7 @@ export const clientJson = (path, prop)=>{
 };
 
 export const client = (path, prop)=>{
-    return clientJson(API+path, prop)
+    return clientLink(API+path, prop)
 };
 
 export const clientPost = (path, entity) => {
@@ -34,8 +34,19 @@ export const clientPost = (path, entity) => {
       })
 };
 
+export const clientAdd = (resourcePath, entityPath) => {
+  return clientLink(resourcePath,
+      {
+        method: "PATCH",
+        headers: {
+          'Content-Type': 'text/uri-list'
+        },
+        body: entityPath
+      })
+};
+
 export const clientPatch = (path, entity) => {
-  return clientJson(path,
+  return clientLink(path,
       {
         method: "PATCH",
         headers: {
