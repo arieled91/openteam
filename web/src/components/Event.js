@@ -30,7 +30,8 @@ export default class Event extends Component {
       playerSearchSuggestions : [],
       eventSearchSuggestions : [],
       editMode : false,
-      eventSearch : ""
+      eventSearch : "",
+      reloadTeams : false
     };
 
 
@@ -40,9 +41,9 @@ export default class Event extends Component {
     this.onClickAddPlayer = this.onClickAddPlayer.bind(this);
     this.onSearchEvent = this.onSearchEvent.bind(this);
     this.onClickEventSearch = this.onClickEventSearch.bind(this);
-  }
-  componentWillMount(){
-      this.populate();
+    this.movePlayer = this.movePlayer.bind(this);
+
+    this.populate();
   }
 
   populate(){
@@ -53,7 +54,7 @@ export default class Event extends Component {
                       event: entity,
                       eventName: entity.name,
                       eventDate: entity.dateTime,
-                      teams: this.buildTeams(teamsResponse._embedded.teams),
+                      teams: teamsResponse._embedded.teams,
                       editMode: true
                   });
               });
@@ -65,12 +66,10 @@ export default class Event extends Component {
   }
 
   populatePlayerSuggestions(){
-    client(
-        "players/search/findByNameContaining?name="+this.state.playerSearch+"&active=true&size="+10)
+    client("players/search/findByNameContaining?name="+this.state.playerSearch+"&active=true&size="+10)
     .then((entity) => {
       const players = entity._embedded.players;
-      players
-      .forEach((player)=>{
+      players.forEach((player)=>{
         player.sortKey = player._links.self.href;
         player.value = player.name;
       });
@@ -83,12 +82,10 @@ export default class Event extends Component {
   }
 
   populateEventSuggestions(){
-    client(
-        "events/search/findByNameIgnoreCaseContainingOrderByDateTimeDesc?name="+this.state.eventSearch+"&size="+10)
+    client("events/search/findByNameIgnoreCaseContainingOrderByDateTimeDesc?name="+this.state.eventSearch+"&size="+10)
     .then((entity) => {
       const events = entity._embedded.events;
-      events
-      .forEach((event)=>{
+      events.forEach((event)=>{
         event.sortKey = event._links.self.href;
         // event.value = event.name + " ("+dateFormat(event.dateTime, "dd/mm/yyyy, h:MM")+")";
 
@@ -198,7 +195,7 @@ export default class Event extends Component {
     return (<div key={i}><Team  team={this.state.teams[i]}/></div>);
   }
 
-  buildTeams(teams) {
+  /*buildTeams(teams) {
     teams.forEach(team => {
         clientLink(team._links.players.href).then((entity) => {
           const players = entity._embedded.players;
@@ -212,7 +209,7 @@ export default class Event extends Component {
     });
 
     return teams;
-  }
+  }*/
 
   render() {
     return (
@@ -308,14 +305,12 @@ export default class Event extends Component {
                   {
                     this.state.teams ?
                         this.state.teams.map((team, i) =>
-                            <div key={team._links.self.href}><Team team={this.state.teams[i]}/></div>)
+                            <div key={team._links.self.href}><Team players={this.state.teams[i].players} label="Roster"/></div>)
                         : <div/>
                   }
                 </Row>
               </div>
             </Form>
-
-
           </Grid>
 
         </div>
@@ -325,69 +320,27 @@ export default class Event extends Component {
 
 class Team extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-          team : this.props.team
-        };
-
-    }
-
     // static propTypes = {
     //     team: React.PropTypes.object.isRequired
     // };
 
 
-    componentWillReceiveProps(nextProps){
-        this.setState({
-            team: nextProps.team
-        });
-    }
-
-
     render() {
 
         const style = {textAlign: 'center', minWidth: '200px'};
+        const {players, label} = this.props;
 
-        if(isDefined(this.state.team)) {
-            return (
-                <Row>
-                  <Col xs={5} md={2}>
-                    <ControlLabel>{this.state.team.name}</ControlLabel>
-                    <ListGroup style={style}>
-                      {
-                        this.state.team.players ? this.state.team.players.map((player) =>
-                            <ListGroupItem key={player.id}>{player.name}</ListGroupItem>)  : <ListGroupItem/>
-                      }
+        return (
+            <Col xs={5} md={2}>
+            <ControlLabel>{label}</ControlLabel>
+            <ListGroup style={style}>
+              {
+                players ? players.map((player) =>
+                    <ListGroupItem key={player.name}>{player.name}</ListGroupItem>)  : <span/>
+              }
 
-                    </ListGroup>
-                  </Col>
-                </Row>
-            )
-        }else {
-            return (<div/>)
-        }
+            </ListGroup>
+            </Col>
+        )
     }
 }
-
-// class PlayerRow extends Component{
-//     constructor(props){
-//       super(props);
-//     }
-//
-//     static propTypes = {
-//         player: React.PropTypes.object.isRequired
-//     };
-//
-//     render() {
-//
-//         return (
-//             <tr key={this.props.player.id} draggable="true">
-//                 {<td>{this.props.player.name}</td>}
-//             </tr>
-//         )
-//     }
-//
-//
-// }
-

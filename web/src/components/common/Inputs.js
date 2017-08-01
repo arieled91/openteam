@@ -1,10 +1,10 @@
 import React from 'react';
 import {
   Col,
-  ControlLabel, FormControl, FormGroup, Glyphicon,
-  HelpBlock
+  ControlLabel, FormControl, FormGroup, HelpBlock
 } from "react-bootstrap";
 import Autosuggest from 'react-bootstrap-autosuggest'
+import PropTypes from 'prop-types';
 
 export const FieldGroup = ({ id, label, help, colxs, colmd, ...props })=>{
   const hideAutoFillColorStyle = {
@@ -25,24 +25,31 @@ export const FieldGroup = ({ id, label, help, colxs, colmd, ...props })=>{
   );
 };
 
-export const SearchBox = ({...props })=>{
+export const SearchBox = (props)=>{
+const { id,colxs, colmd, placeholder, suggestions,value,onChange,bsSize,label, validationState, help,...rest} = props;
   return (
-      <Col xs={props.colxs} md={props.colmd}>
-        <FormGroup controlId={props.id}
-                   bsSize={props.bsSize} validationState={props.validationState}>
-          <ControlLabel>{props.label}</ControlLabel>
+      <Col xs={colxs} md={colmd}>
+        <FormGroup controlId={id}
+                   bsSize={bsSize} validationState={validationState}>
+          <ControlLabel>{label}</ControlLabel>
           <Autosuggest
               valueIsItem
-              datalist={props.suggestions}
-              placeholder={props.placeholder}
-              value={props.value}
-              onChange={props.onChange}
-              bsSize={props.bsSize}
-              {...props}
+              datalist={suggestions}
+              placeholder={placeholder}
+              value={value}
+              onChange={onChange}
+              bsSize={bsSize}
+              {...rest}
           />
-          {props.validationState && <FormControl.Feedback />}
-          {props.validationState && <HelpBlock>{props.help}</HelpBlock>}
+          {validationState && <FormControl.Feedback />}
+          {validationState && <HelpBlock>{help}</HelpBlock>}
         </FormGroup>
       </Col>
   );
+};
+
+
+SearchBox.propTypes = {
+    colxs: PropTypes.number,
+    colmd: PropTypes.number
 };
