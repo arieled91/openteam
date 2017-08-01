@@ -118,11 +118,11 @@ export default class Event extends Component {
   }
 
   patch(entity, path){
-    // clientPatch(path, entity).then(() => {
-    //   this.populate();
-    // }).catch((e)=>{
-    //   appError("Server error");
-    // })
+    clientPatch(path, entity).then(() => {
+      this.populate();
+    }).catch((e)=>{
+      appError("Server error");
+    })
   }
 
 
@@ -133,8 +133,7 @@ export default class Event extends Component {
   }
 
   reset(){
-      this.setState({
-      });
+      this.populate();
   }
 
   create(e){
@@ -148,12 +147,8 @@ export default class Event extends Component {
   }
 
   update(e){
-    // let players =  this.state.players;
-    // const player = players.find(
-    //     player => player.id===this.state.id
-    // );
-    //
-    // this.patch(this.copyTo({id : player.id}), player._links.self.href);
+    const event = this.state.event;
+    this.patch(this.copyTo(event), event._links.self.href);
   }
 
 
@@ -275,7 +270,6 @@ export default class Event extends Component {
                     </Button>
                     <Button type="submit" className={"btn btn-success "+(this.state.editMode ? "":"hide")} style={{marginTop:"25px"}}>
                       <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
-                      Save
                     </Button>
                     <Button className={"btn btn-default "+(isDefined(this.state.id) ? "":"hide")} style={{marginTop:"25px", marginLeft:'20px'}} onClick={this.reset}>
                       <Glyphicon glyph="remove" style={{marginRight:'5px'}}/>
