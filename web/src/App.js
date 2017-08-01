@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import {
-  Link, Route, HashRouter
+  Route, HashRouter
 } from "react-router-dom";
 
 import About from "./components/About";
@@ -10,6 +10,7 @@ import Player from "./components/Player";
 import Event from "./components/Event";
 import {Message} from "./components/common/Message";
 import {health} from "./components/common/Api";
+import {LinkContainer} from "react-router-bootstrap";
 
 export default class App extends Component {
 
@@ -71,13 +72,13 @@ export default class App extends Component {
                 </Navbar.Header>
                 <Navbar.Collapse>
                   <Nav>
-                    <NavItem><Link to="/">Home</Link></NavItem>
-                    <NavItem><Link to="/players">Players</Link></NavItem>
-                    <NavItem><Link to="/event">Event</Link></NavItem>
+                    <NavItem><LinkContainer to="/"><span>Home</span></LinkContainer></NavItem>
+                    <NavItem><LinkContainer to="/players"><span>Players</span></LinkContainer></NavItem>
+                    <NavItem><LinkContainer to="/event"><span>Event</span></LinkContainer></NavItem>
 
                   </Nav>
                   <Nav pullRight>
-                    <NavItem><Link to="/about">About</Link></NavItem>
+                    <NavItem><LinkContainer to="/about"><span>About</span></LinkContainer></NavItem>
                   </Nav>
 
                 </Navbar.Collapse>

@@ -10,8 +10,8 @@ export const health = ()=>{
   });
 };
 
-export const clientLink = (path, prop)=>{
-  return fetch(path, prop)
+export const clientLink = (path, ...props)=>{
+  return fetch(path, ...props)
   .then(handleErrors)
   .then((response)=>{
     return response.json()

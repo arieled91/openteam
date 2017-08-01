@@ -251,7 +251,8 @@ export default class Player extends Component {
                     type="email"
                     label="Email address"
                     value={this.state.playerEmail}
-                    onChange={this.playerSearchChanged}
+                    onChange={this.playerEmailChanged}
+                    inputRef={input => this.playerEmail = input}
                     placeholder="Enter email"
                     colxs={7}
                     colmd={4}
