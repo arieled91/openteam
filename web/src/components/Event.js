@@ -36,10 +36,6 @@ export default class Event extends Component {
 
     this.onSubmit = this.onSubmit.bind(this);
     this.reset = this.reset.bind(this);
-    this.onDragStart = this.onDragStart.bind(this);
-    this.onDrop = this.onDrop.bind(this);
-    this.onDragEnter = this.onDragEnter.bind(this);
-    this.onDragOver = this.onDragOver.bind(this);
     this.onSearchPlayer = this.onSearchPlayer.bind(this);
     this.onClickAddPlayer = this.onClickAddPlayer.bind(this);
     this.onSearchEvent = this.onSearchEvent.bind(this);
@@ -50,7 +46,6 @@ export default class Event extends Component {
   }
 
   populate(){
-      console.log("events/search/findByUuid?uuid="+this.state.id);
       if(isDefined(this.state.id)) {
         client("events/search/findByUuid?uuid="+this.state.id).then((entity) => {
               clientLink(entity._links.teams.href).then((teamsResponse) => {
@@ -58,7 +53,7 @@ export default class Event extends Component {
                       event: entity,
                       eventName: entity.name,
                       eventDate: entity.dateTime,
-                      teams: teamsResponse._embedded.teams,
+                      teams: this.buildTeams(teamsResponse._embedded.teams),
                       editMode: true
                   });
               });
@@ -66,7 +61,6 @@ export default class Event extends Component {
               appError("Server error");
           });
       }
-
       this.populatePlayerSuggestions();
   }
 
@@ -151,21 +145,6 @@ export default class Event extends Component {
     this.patch(this.copyTo(event), event._links.self.href);
   }
 
-
-  onDragStart(e){
-    console.log(e);
-  }
-  onDrop(component, e){
-      console.log(component, e);
-  }
-
-  onDragEnter(component, e){
-      console.log(component, e);
-  };
-  onDragOver(component, e){
-      console.log(component, e);
-  };
-
   onSearchEvent(){
     this.populateEventSuggestions();
   }
@@ -206,8 +185,34 @@ export default class Event extends Component {
     this.setState({ eventSearch: value });
   };
 
+  movePlayer(playerInx, teamFrom, teamTo){
+    let teams = this.state.teams;
+    let players = teams[teamFrom].players;
+    const player = players.splice(playerInx, 1);
+    teams[teamTo].players.push(player);
+    this.setState({teams: teams});
+  }
 
 
+  renderTeam(i) {
+    return (<div key={i}><Team  team={this.state.teams[i]}/></div>);
+  }
+
+  buildTeams(teams) {
+    teams.forEach(team => {
+        clientLink(team._links.players.href).then((entity) => {
+          const players = entity._embedded.players;
+          players.forEach((player) => {
+            player.id = player._links.self.href
+          });
+          team.players = players;
+        }).catch((e) => {
+          appError("Server error");
+        });
+    });
+
+    return teams;
+  }
 
   render() {
     return (
@@ -299,9 +304,14 @@ export default class Event extends Component {
                         <Glyphicon glyph="plus"/>
                   </Button>
                 </Row>
-                <div>
-                    <Team team={this.state.teams[0]}/>
-                </div>
+                <Row>
+                  {
+                    this.state.teams ?
+                        this.state.teams.map((team, i) =>
+                            <div key={team._links.self.href}><Team team={this.state.teams[i]}/></div>)
+                        : <div/>
+                  }
+                </Row>
               </div>
             </Form>
 
@@ -318,8 +328,7 @@ class Team extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          team : {},
-          players : []
+          team : this.props.team
         };
 
     }
@@ -333,30 +342,8 @@ class Team extends Component {
         this.setState({
             team: nextProps.team
         });
-
-        if(isDefined(nextProps.team)) this.updatePlayers(nextProps.team);
-        // this.forceUpdate();
     }
 
-    updatePlayers(team) {
-        if (isDefined(team)) {
-            clientLink(team._links.players.href).then((entity) => {
-                const players = entity._embedded.players;
-                players.forEach((player) => {
-                    player.id = player._links.self.href
-                });
-                this.setState({
-                    players: players
-                })
-            }).catch((e) => {
-                appError("Server error");
-            });
-        }
-
-        this.setState({
-            players: []
-        })
-    }
 
     render() {
 
@@ -367,10 +354,10 @@ class Team extends Component {
                 <Row>
                   <Col xs={5} md={2}>
                     <ControlLabel>{this.state.team.name}</ControlLabel>
-                    <ListGroup condensed hover style={style}>
+                    <ListGroup style={style}>
                       {
-                        isDefined(this.state.players) ? this.state.players.map((player) =>
-                            <ListGroupItem key={player.id} draggable="true">{player.name}</ListGroupItem>)  : <ListGroupItem/>
+                        this.state.team.players ? this.state.team.players.map((player) =>
+                            <ListGroupItem key={player.id}>{player.name}</ListGroupItem>)  : <ListGroupItem/>
                       }
 
                     </ListGroup>
