@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-  Button, Col, ControlLabel, Form, FormGroup, Glyphicon, Grid, ListGroup,
+  Button, Col, ControlLabel, Form, Glyphicon, Grid, ListGroup,
   ListGroupItem, Row
 } from "react-bootstrap";
 
@@ -13,6 +13,7 @@ import {
 import {appError} from "./common/Message";
 import {isDefined} from "../common/Util";
 import {dateTimeFormat} from "./common/Utils";
+import {ButtonCancel} from "./common/Components";
 
 export default class Event extends Component {
 
@@ -36,7 +37,6 @@ export default class Event extends Component {
 
 
     this.onSubmit = this.onSubmit.bind(this);
-    this.reset = this.reset.bind(this);
     this.onSearchPlayer = this.onSearchPlayer.bind(this);
     this.onClickAddPlayer = this.onClickAddPlayer.bind(this);
     this.onSearchEvent = this.onSearchEvent.bind(this);
@@ -119,13 +119,14 @@ export default class Event extends Component {
 
   onSubmit(e){
     this.state.editMode ? this.update(e) : this.create(e);
-    this.reset();
+    this.populate();
     e.preventDefault();
   }
 
-  reset(){
-      this.populate();
-  }
+  // cancel(){
+  //     this.props.history.push('/event/');
+  //     this.props.history.go();
+  // }
 
   create(e){
     this.post(this.copyTo({}));
@@ -149,7 +150,8 @@ export default class Event extends Component {
   onClickAddPlayer(){
     const playerLink = this.state.playerSearch.sortKey;
     clientAdd(this.state.teams[0]._links.players.href, playerLink).catch(()=>{});
-    this.setState({playerSearch: ""})
+    this.setState({playerSearch: ""});
+    this.populate();
   }
 
 
@@ -211,7 +213,11 @@ export default class Event extends Component {
     return teams;
   }*/
 
+
+
   render() {
+
+
     return (
         <div>
           <Grid>
@@ -263,21 +269,6 @@ export default class Event extends Component {
                     colmd={4}
                     required
                 />
-
-                <Col xs={5} md={2}>
-                  <FormGroup>
-                    <Button type="submit" className={"btn btn-primary "+(this.state.editMode ? "hide":"")} style={{marginTop:"25px"}}>
-                      <Glyphicon glyph="plus" style={{marginRight:'5px'}}/>
-                      Add
-                    </Button>
-                    <Button type="submit" className={"btn btn-success "+(this.state.editMode ? "":"hide")} style={{marginTop:"25px"}}>
-                      <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
-                    </Button>
-                    <Button className={"btn btn-default "+(isDefined(this.state.id) ? "":"hide")} style={{marginTop:"25px", marginLeft:'20px'}} onClick={this.reset}>
-                      <Glyphicon glyph="remove" style={{marginRight:'5px'}}/>
-                    </Button>
-                  </FormGroup>
-                </Col>
               </Row>
               <div id="eventTeamPlayers" hidden={!isDefined(this.state.id)}>
                 <Row>
@@ -310,6 +301,15 @@ export default class Event extends Component {
                   }
                 </Row>
               </div>
+                <footer>
+                    <Col xs={12} md={10}>
+                        <ButtonCancel className="pull-right">Cancel</ButtonCancel>
+                        <Button type="submit" className={"btn btn-success pull-right"} style={{marginRight:'10px'}}>
+                            <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
+                            Save
+                        </Button>
+                    </Col>
+                </footer>
             </Form>
           </Grid>
 
