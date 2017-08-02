@@ -32,6 +32,5 @@ interface TeamRepository : CrudRepository<Team, Long>, PagingAndSortingRepositor
 
 @Projection(name = "inlinePlayers", types = arrayOf(Team::class))
 interface PlayersInlineProjection {
-    var name : String
     var players: MutableSet<Player>
 }
