@@ -220,13 +220,13 @@ export default class Event extends Component {
 
     return (
         <div>
-          <Grid>
+          <Grid className="containter">
             <Form onSubmit={this.onSubmit}>
               <Row>
                 <SearchBox
                     id="eventSearch"
                     label="Search"
-                    colxs={7}
+                    colxs={10}
                     colmd={4}
                     value={this.state.eventSearch}
                     onSearch={this.onSearchEvent}
@@ -252,7 +252,7 @@ export default class Event extends Component {
                     value={this.state.eventName}
                     onChange={this.eventNameChanged}
                     inputRef={input => this.eventName = input}
-                    colxs={7}
+                    colxs={10}
                     colmd={4}
                     required
                 />
@@ -265,7 +265,7 @@ export default class Event extends Component {
                     value={this.state.eventDate}
                     onChange={this.eventDateChanged}
                     inputRef={input => this.eventDate = input}
-                    colxs={7}
+                    colxs={10}
                     colmd={4}
                     required
                 />
@@ -275,7 +275,7 @@ export default class Event extends Component {
                   <SearchBox
                       id="playerSearch"
                       label="Add Player"
-                      colxs={7}
+                      colxs={10}
                       colmd={4}
                       value={this.state.playerSearch}
                       onSearch={this.onSearchPlayer}

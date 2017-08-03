@@ -1,7 +1,6 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
-
 
 a {
   text-decoration: none!important;
@@ -12,9 +11,6 @@ a:visited {
   color: inherit;
 }
 
-/*body {*/
-  /*padding: 20px;*/
-/*}*/
 
 header{
   padding: 0;

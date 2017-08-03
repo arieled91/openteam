@@ -222,8 +222,8 @@ export default class Player extends Component {
 
     return (
         <div>
-          <Grid>
-            <Form onSubmit={this.onSubmit}>
+          <Grid className="containter">
+            <Form onSubmit={this.onSubmit} style={{marginBottom: '3%'}}>
               <Row>
                 <FieldGroup
                     id="playerName"
