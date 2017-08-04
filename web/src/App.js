@@ -63,7 +63,7 @@ export default class App extends Component {
           <Message type="info" message={this.state.infoMessage} onDismiss={this.onDismissInfoMessage}/>
           <HashRouter>
             <div>
-              <Navbar inverse collapseOnSelect>
+              <Navbar inverse collapseOnSelect className="shadowed">
                 <Navbar.Header>
                   <Navbar.Brand>
                     OpenTeam

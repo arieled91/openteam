@@ -220,7 +220,7 @@ export default class Event extends Component {
 
     return (
         <div>
-          <Grid className="containter">
+          <Grid className="shadowed form-container">
             <Form onSubmit={this.onSubmit}>
               <Row>
                 <SearchBox
@@ -301,7 +301,7 @@ export default class Event extends Component {
                   }
                 </Row>
               </div>
-                <footer>
+                <footer className="modal-footer">
                     <Col xs={12} md={10}>
                         <ButtonCancel className="pull-right">Cancel</ButtonCancel>
                         <Button type="submit" className={"btn btn-success pull-right"} style={{marginRight:'10px'}}>

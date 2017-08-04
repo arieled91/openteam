@@ -222,7 +222,7 @@ export default class Player extends Component {
 
     return (
         <div>
-          <Grid className="containter">
+          <Grid className="shadowed form-container">
             <Form onSubmit={this.onSubmit} style={{marginBottom: '3%'}}>
               <Row>
                 <FieldGroup
@@ -233,11 +233,11 @@ export default class Player extends Component {
                     value={this.state.playerName}
                     onChange={this.playerNameChanged}
                     inputRef={input => this.playerName = input}
-                    colxs={7}
+                    colxs={9}
                     colmd={4}
                     required
                 />
-                <Col xs={5} md={2}>
+                <Col xs={3} md={2}>
                   <Checkbox
                       id="playerGuest"
                       value={this.state.playerGuest}
@@ -254,10 +254,10 @@ export default class Player extends Component {
                     onChange={this.playerEmailChanged}
                     inputRef={input => this.playerEmail = input}
                     placeholder="Enter email"
-                    colxs={7}
+                    colxs={9}
                     colmd={4}
                 />
-                <Col xs={5} md={2}>
+                <Col xs={3} md={2}>
                   <FormGroup>
                     <Button type="submit" className={"btn btn-primary "+(this.state.editMode ? "hide":"")} style={{marginTop:"25px"}}>
                       <Glyphicon glyph="plus" style={{marginRight:'5px'}}/>

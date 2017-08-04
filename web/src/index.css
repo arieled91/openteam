@@ -5,12 +5,16 @@ body {
   background-image: url('/images/bg.jpg');
 }
 
-footer {
-  margin-top: 5%;
+.shadowed{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 5px 15px 0 rgba(0, 0, 0, 0.15);
 }
 
-.containter{
+.form-container{
   padding: 30px;
   background: rgba(255,255,255,0.9);
-  border-radius: 5px;
+  border-radius: 4px;
+}
+
+.form-container footer{
+   margin-top: 5%;
 }
