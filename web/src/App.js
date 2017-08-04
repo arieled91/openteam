@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 
 import About from "./components/About";
-import {Nav, Navbar, NavItem} from "react-bootstrap";
+import {Button, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import Player from "./components/Player";
 import Event from "./components/Event";
 import {Message} from "./components/common/Message";
@@ -63,7 +63,7 @@ export default class App extends Component {
           <Message type="info" message={this.state.infoMessage} onDismiss={this.onDismissInfoMessage}/>
           <HashRouter>
             <div>
-              <Navbar inverse collapseOnSelect className="shadowed">
+              <Navbar  collapseOnSelect className="shadowed">
                 <Navbar.Header>
                   <Navbar.Brand>
                     OpenTeam
@@ -72,7 +72,7 @@ export default class App extends Component {
                 </Navbar.Header>
                 <Navbar.Collapse>
                   <Nav>
-                    <NavItem><LinkContainer to="/"><span>Home</span></LinkContainer></NavItem>
+                    <NavItem><LinkContainer to="/"><text>Home</text></LinkContainer></NavItem>
                     <NavItem><LinkContainer to="/players"><span>Players</span></LinkContainer></NavItem>
                     <NavItem><LinkContainer to="/event"><span>Event</span></LinkContainer></NavItem>
 
