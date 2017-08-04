@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 
 import About from "./components/About";
-import {Button, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
+import {Nav, Navbar, NavItem} from "react-bootstrap";
 import Player from "./components/Player";
 import Event from "./components/Event";
 import {Message} from "./components/common/Message";
