@@ -58,7 +58,7 @@ export default class App extends Component {
 
   render() {
     return (
-        <div style={{background: "url(/images/bg.jpg)"}}>
+        <div style={{background: "url(images/bg.jpg)"}}>
           <Message type="danger" message={this.state.errorMessage} onDismiss={this.onDismissErrorMessage}/>
           <Message type="info" message={this.state.infoMessage} onDismiss={this.onDismissInfoMessage}/>
           <HashRouter>
