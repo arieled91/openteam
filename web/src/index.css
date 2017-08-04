@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 4px;
   font-family: sans-serif;
-  background-image: url('/images/bg.jpg');
+  /*background-image: url("images/bg.jpg");*/
 }
 
 .shadowed{
