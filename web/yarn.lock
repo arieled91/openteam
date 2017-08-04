@@ -5473,6 +5473,12 @@ react-error-overlay@^1.0.9:
     settle-promise "1.0.0"
     source-map "0.5.6"
 
+react-localization@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/react-localization/-/react-localization-0.1.1.tgz#8a02eae888ef6107e0c896ad65e0bbff63c98673"
+  dependencies:
+    react "^15.6.1"
+
 react-modal@^1.4.0:
   version "1.9.7"
   resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-1.9.7.tgz#07ef56790b953e3b98ef1e2989e347983c72871d"

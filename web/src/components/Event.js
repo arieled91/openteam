@@ -13,7 +13,8 @@ import {
 import {appError} from "./common/Message";
 import {isDefined} from "../common/Util";
 import {dateTimeFormat} from "./common/Utils";
-import {ButtonCancel} from "./common/Components";
+import {ButtonCancel, ButtonSave} from "./common/Button";
+import {local} from "./locale/EventLocale";
 
 export default class Event extends Component {
 
@@ -225,7 +226,7 @@ export default class Event extends Component {
               <Row>
                 <SearchBox
                     id="eventSearch"
-                    label="Search"
+                    label={local.search}
                     colxs={10}
                     colmd={4}
                     value={this.state.eventSearch}
@@ -233,7 +234,7 @@ export default class Event extends Component {
                     onChange={this.eventSearchChanged}
                     suggestions={this.state.eventSearchSuggestions}
                     searchDebounce={300}
-                    placeholder="Event..."
+                    placeholder={local.eventPlaceHolder}
                 />
                 <Button
                   disabled={!isDefined(this.state.eventSearch)}
@@ -247,8 +248,8 @@ export default class Event extends Component {
                 <FieldGroup
                     id="eventName"
                     type="text"
-                    label="Name"
-                    placeholder="Enter Name"
+                    label={local.name}
+                    placeholder={local.namePlaceHolder}
                     value={this.state.eventName}
                     onChange={this.eventNameChanged}
                     inputRef={input => this.eventName = input}
@@ -259,9 +260,9 @@ export default class Event extends Component {
                   <FieldGroup
                     id="eventDate"
                     type="datetime-local"
-                    label="Date"
+                    label={local.date}
                     min={this.state.currentDateTime}
-                    placeholder="Enter Date"
+                    placeholder={local.datePlaceHolder}
                     value={this.state.eventDate}
                     onChange={this.eventDateChanged}
                     inputRef={input => this.eventDate = input}
@@ -274,7 +275,7 @@ export default class Event extends Component {
                 <Row>
                   <SearchBox
                       id="playerSearch"
-                      label="Add Player"
+                      label={local.addPayer}
                       colxs={10}
                       colmd={4}
                       value={this.state.playerSearch}
@@ -282,7 +283,7 @@ export default class Event extends Component {
                       onChange={this.playerSearchChanged}
                       suggestions={this.state.playerSearchSuggestions}
                       searchDebounce={300}
-                      placeholder="Enter player to add"
+                      placeholder={local.addPayerPlaceHolder}
                   />
                   <Button
                       disabled={!isDefined(this.state.playerSearch)}
@@ -303,11 +304,8 @@ export default class Event extends Component {
               </div>
                 <footer className="modal-footer">
                     <Col xs={12} md={10}>
-                        <ButtonCancel className="pull-right">Cancel</ButtonCancel>
-                        <Button type="submit" className={"btn btn-success pull-right"} style={{marginRight:'10px'}}>
-                            <Glyphicon glyph="floppy-disk" style={{marginRight:'5px'}}/>
-                            Save
-                        </Button>
+                        <ButtonCancel/>
+                        <ButtonSave/>
                     </Col>
                 </footer>
             </Form>

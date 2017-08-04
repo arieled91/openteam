@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Button} from "react-bootstrap";
+import {Button, Glyphicon} from "react-bootstrap";
 import {Route} from "react-router-dom";
+import {button} from "../locale/CommonLocale";
+
+const buttonMargin={
+  marginRight: '10px',
+  marginLeft: '10px'
+};
 
 export const ButtonNavigate = (props) => {
 
@@ -9,6 +15,7 @@ export const ButtonNavigate = (props) => {
     return (
         <Route render={({ history}) => (
             <Button
+                style={buttonMargin}
                 {...rest}
                 onClick={() => {history.push(to); history.go()}}
             >
@@ -23,14 +30,14 @@ ButtonNavigate.propTypes = {
 
 export const ButtonCancel = (props) => {
 
-    const {children, ...rest} = props;
+    const {...rest} = props;
     return (
         <Route render={({ history}) => (
             <ButtonNavigate
                 {...rest}
                 to={withoutId(history.location.pathname)}
             >
-                {children}
+              {button.cancel}
             </ButtonNavigate>
         )} />
 )};
@@ -44,3 +51,12 @@ function withoutId(path) {
     }
     return path;
 }
+export const ButtonSave = () => {
+  return(
+    <Button type="submit" className={"btn btn-success"}
+            style={buttonMargin}>
+      <Glyphicon glyph="floppy-disk" style={{marginRight: '5px'}}/>
+      {button.save}
+    </Button>
+  )
+};
