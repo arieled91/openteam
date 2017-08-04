@@ -11,7 +11,6 @@ import Event from "./components/Event";
 import {Message} from "./components/common/Message";
 import {health} from "./components/common/Api";
 import {LinkContainer} from "react-router-bootstrap";
-import background from './images/bg.jpg';
 
 export default class App extends Component {
 
@@ -59,7 +58,7 @@ export default class App extends Component {
 
   render() {
     return (
-        <div style={{background: 'url('+background+')'}}>
+        <div>
           <Message type="danger" message={this.state.errorMessage} onDismiss={this.onDismissErrorMessage}/>
           <Message type="info" message={this.state.infoMessage} onDismiss={this.onDismissInfoMessage}/>
           <HashRouter>
