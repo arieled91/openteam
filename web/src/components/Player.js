@@ -83,6 +83,7 @@ export default class Player extends Component {
   }
 
   patch(updatePlayer, path){
+    console.log(updatePlayer);
     clientPatch(path, updatePlayer).then((player) => {
       this.populate(0);
     }).catch((e)=>{
@@ -106,6 +107,7 @@ export default class Player extends Component {
   onSubmit(e){
     this.state.editMode ? this.update(e) : this.create(e);
     this.reset();
+    console.log(this.state.playerGuest);
     e.preventDefault();
   }
 
@@ -115,7 +117,7 @@ export default class Player extends Component {
           uuid: uuidv4(),
           playerName: "",
           playerEmail: "",
-          playerGuest:false
+          playerGuest: false
       });
   }
 
@@ -203,7 +205,7 @@ export default class Player extends Component {
   };
 
   playerGuestChanged = (event) => {
-      this.setState({ playerGuest: event.target.value });
+      this.setState({ playerGuest: event.target.checked});
   };
 
   selectRowProp = {
@@ -240,7 +242,8 @@ export default class Player extends Component {
                 <Col xs={3} md={2}>
                   <Checkbox
                       id="playerGuest"
-                      value={this.state.playerGuest}
+                      checked={this.state.playerGuest}
+                      inputRef={input => this.playerGuest = input}
                       onChange={this.playerGuestChanged}
                       style={{marginTop:"30px"}}>
                     Guest
