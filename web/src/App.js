@@ -77,14 +77,14 @@ export default class App extends Component {
                     <NavItem><LinkContainer to="/event"><span>Event</span></LinkContainer></NavItem>
 
                   </Nav>
-                  <Nav pullRight>
+                  {/*<Nav pullRight>
                     <NavItem><LinkContainer to="/about"><span>About</span></LinkContainer></NavItem>
-                  </Nav>
+                  </Nav>*/}
 
                 </Navbar.Collapse>
               </Navbar>
               <Route exact path="/" component={Home}/>
-              <Route path="/about" component={About}/>
+              {/*<Route path="/about" component={About}/>*/}
               <Route path="/players" component={Player}/>
               <Route path="/event/:id?" component={Event}/>
             </div>
@@ -96,6 +96,6 @@ export default class App extends Component {
 
 const Home = () => (
     <div>
-      <h2>Home</h2>
+      <img src="icons/team.svg" className="centered" style={{width: '250px'}}/>
     </div>
 );
